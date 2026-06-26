@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "IS12CommandResponse",
+  "title": "IS12CommandResponse",
+  "description": "IS-12 CommandResponse wire message (messageType=1).",
+  "type": "object",
+  "required": ["messageType", "responses"],
+  "additionalProperties": false,
+  "properties": {
+    "messageType": { "type": "integer", "const": 1 },
+    "responses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["handle", "result"],
+        "additionalProperties": false,
+        "properties": {
+          "handle": { "type": "integer", "minimum": 1, "maximum": 65535 },
+          "result": {
+            "type": "object",
+            "required": ["status"],
+            "properties": {
+              "status": {
+                "type": "integer",
+                "enum": [200, 298, 299, 400, 401, 404, 405, 406, 407, 409, 500, 501, 502, 503, 504, 505]
+              },
+              "value": {},
+              "errorMessage": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  }
+}

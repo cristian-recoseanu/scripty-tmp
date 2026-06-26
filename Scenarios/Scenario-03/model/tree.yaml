@@ -1,0 +1,64 @@
+location: root
+entity_def: RootBlock
+properties: []
+children:
+  - location: receiver-monitors
+    entity_def: ReceiverMonitorsBlock
+    properties: []
+    children:
+      - location: rx-monitor-01
+        entity_def: ReceiverMonitor
+        properties:
+          - id: statusReportingDelay
+            value: 3
+          - id: linkStatus
+            value: 1
+          - id: linkStatusTransitionCounter
+            value: 0
+          - id: connectionStatus
+            value: 0
+          - id: connectionStatusTransitionCounter
+            value: 0
+          - id: externalSynchronizationStatus
+            value: 0
+          - id: externalSynchronizationStatusTransitionCounter
+            value: 0
+          - id: synchronizationSourceId
+            value: "internal"
+          - id: streamStatus
+            value: 0
+          - id: streamStatusTransitionCounter
+            value: 0
+          - id: autoResetCountersAndMessages
+            value: true
+        children: []
+  - location: sender-monitors
+    entity_def: SenderMonitorsBlock
+    properties: []
+    children:
+      - location: tx-monitor-01
+        entity_def: SenderMonitor
+        properties:
+          - id: statusReportingDelay
+            value: 3
+          - id: linkStatus
+            value: 1
+          - id: linkStatusTransitionCounter
+            value: 0
+          - id: transmissionStatus
+            value: 0
+          - id: transmissionStatusTransitionCounter
+            value: 0
+          - id: externalSynchronizationStatus
+            value: 0
+          - id: externalSynchronizationStatusTransitionCounter
+            value: 0
+          - id: synchronizationSourceId
+            value: "internal"
+          - id: essenceStatus
+            value: 0
+          - id: essenceStatusTransitionCounter
+            value: 0
+          - id: autoResetCountersAndMessages
+            value: true
+        children: []

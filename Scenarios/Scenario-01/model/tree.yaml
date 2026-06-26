@@ -1,0 +1,6 @@
+location: root
+entity_def: RootBlock
+properties:
+  - id: label
+    value: ""
+children: []

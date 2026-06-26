@@ -1,0 +1,42 @@
+instance:
+  name: scenario-03
+  logLevel: info
+
+model:
+  entities: model/entities.yaml
+  datatypes: model/datatypes.yaml
+  tree: model/tree.yaml
+
+ingress:
+  id: mqtt-ingress
+  protocol: mqtt
+  mapping: mapping/ingress.mqtt.json
+  config:
+    url: "${MQTT_BROKER_URL:-mqtt://localhost:1883}"
+    clientId: scenario-03-bridge
+    subscriptions:
+      - topicFilter: devices/device-01/receivers/rx-1/#
+        qos: 0
+      - topicFilter: devices/device-01/senders/tx-1/#
+        qos: 0
+    mapping: mapping/ingress.mqtt.json
+
+egress:
+  - id: is12-egress
+    protocol: nmos-is12
+    mapping: mapping/egress.is12.json
+    config:
+      wsPort: 9005
+      host: "0.0.0.0"
+      wsPath: "/x-nmos/ncp/v1.0"
+      instanceName: scenario-03
+      is04:
+        label: "Scenario-03 Protocol Bridge"
+        description: "MQTT per-domain-status → IS-12 NcReceiverMonitor + NcSenderMonitor"
+        nodeApi:
+          enabled: true
+          httpPort: 9005
+          host: "0.0.0.0"
+          advertiseHost: "localhost"
+        registration:
+          enabled: false

@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "NcFieldDescriptor",
+  "title": "NcFieldDescriptor",
+  "description": "MS-05-02 field descriptor within a struct datatype.",
+  "type": "object",
+  "required": ["name", "typeName", "isNullable", "isSequence", "constraints", "description"],
+  "additionalProperties": false,
+  "properties": {
+    "name":        { "type": "string" },
+    "typeName":    { "type": ["string", "null"] },
+    "isNullable":  { "type": "boolean" },
+    "isSequence":  { "type": "boolean" },
+    "constraints": { "type": "null" },
+    "description": { "type": "string" }
+  }
+}

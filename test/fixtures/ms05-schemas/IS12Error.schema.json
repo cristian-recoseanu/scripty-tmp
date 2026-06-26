@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "IS12Error",
+  "title": "IS12Error",
+  "description": "IS-12 Error wire message (messageType=5).",
+  "type": "object",
+  "required": ["messageType", "status", "errorMessage"],
+  "additionalProperties": false,
+  "properties": {
+    "messageType":   { "type": "integer", "const": 5 },
+    "status": {
+      "type": "integer",
+      "enum": [200, 298, 299, 400, 401, 404, 405, 406, 407, 409, 500, 501, 502, 503, 504, 505]
+    },
+    "errorMessage":  { "type": "string" }
+  }
+}

@@ -1,0 +1,160 @@
+entities:
+  # Root NcBlock — no custom properties; the adapter seeds DeviceManager + ClassManager.
+  - entity_name: RootBlock
+    properties: []
+    methods: []
+
+  # Intermediate NcBlock container for receiver monitors.
+  # Mapped to classId [1,1] in egress.is12.json so isBlockOid() returns true.
+  - entity_name: ReceiverMonitorsBlock
+    properties: []
+    methods: []
+
+  # Full BCP-008-01 NcReceiverMonitor node.
+  # Mapped to classId [1,2,2,1] in egress.is12.json.
+  # Properties are grouped by their inherited MS-05-02 class level:
+  #   Level 3 — NcStatusMonitor (overallStatus, overallStatusMessage, statusReportingDelay)
+  #   Level 4 — NcReceiverMonitor (all receiver-specific properties)
+  - entity_name: ReceiverMonitor
+    description: >-
+      NMOS NcReceiverMonitor (classId [1,2,2,1]).
+      Exposes the full BCP-008-01 monitoring model for a single receiver.
+    properties:
+      # ── NcStatusMonitor level-3 inherited properties ─────────────────────
+      - id: overallStatus
+        type: numeric
+        read_only: true
+        observable: true
+        description: >-
+          NcOverallStatus derived from domain statuses per BCP-008-01 §Receiver overall status.
+          Inactive=0, Healthy=1, PartiallyHealthy=2, Unhealthy=3.
+      - id: overallStatusMessage
+        type: string
+        nullable: true
+        read_only: true
+        observable: true
+        description: Human-readable reason for current overallStatus; null when no message.
+      - id: statusReportingDelay
+        type: numeric
+        read_only: false
+        observable: false
+        description: >-
+          Reporting delay in seconds before non-Healthy states are surfaced.
+          Default 3 per BCP-008-01 §Receiver status reporting delay.
+
+      # ── NcReceiverMonitor level-4 properties ──────────────────────────────
+      - id: linkStatus
+        type: numeric
+        read_only: true
+        observable: true
+        description: >-
+          NcLinkStatus — AllUp=1, SomeDown=2, AllDown=3.
+          Reflects health of all physical interfaces associated with the receiver.
+      - id: linkStatusMessage
+        type: string
+        nullable: true
+        read_only: true
+        observable: true
+        description: Nullable reason for current linkStatus; null when no message.
+      - id: linkStatusTransitionCounter
+        type: numeric
+        read_only: true
+        observable: true
+        description: Increments each time linkStatus transitions to a less-healthy state.
+      - id: connectionStatus
+        type: numeric
+        read_only: true
+        observable: true
+        description: >-
+          NcConnectionStatus — Inactive=0, Healthy=1, PartiallyHealthy=2, Unhealthy=3.
+          Reflects health of the receiver with regards to receiving stream packets.
+      - id: connectionStatusMessage
+        type: string
+        nullable: true
+        read_only: true
+        observable: true
+        description: Nullable reason for current connectionStatus; null when no message.
+      - id: connectionStatusTransitionCounter
+        type: numeric
+        read_only: true
+        observable: true
+        description: Increments each time connectionStatus transitions to a less-healthy state.
+      - id: externalSynchronizationStatus
+        type: numeric
+        read_only: true
+        observable: true
+        description: >-
+          NcSynchronizationStatus — NotUsed=0, Healthy=1, PartiallyHealthy=2, Unhealthy=3.
+          Reflects health of the receiver's external synchronization mechanisms.
+      - id: externalSynchronizationStatusMessage
+        type: string
+        nullable: true
+        read_only: true
+        observable: true
+        description: Nullable reason for current externalSynchronizationStatus; null when no message.
+      - id: externalSynchronizationStatusTransitionCounter
+        type: numeric
+        read_only: true
+        observable: true
+        description: >-
+          Increments each time externalSynchronizationStatus transitions
+          to a less-healthy state.
+      - id: synchronizationSourceId
+        type: string
+        nullable: true
+        read_only: true
+        observable: true
+        description: >-
+          Current synchronization source identifier.
+          MUST be null (no source discovered), "internal" (device is own source),
+          or a non-empty device-specific identifier. MUST NOT be an empty string.
+      - id: streamStatus
+        type: numeric
+        read_only: true
+        observable: true
+        description: >-
+          NcStreamStatus — Inactive=0, Healthy=1, PartiallyHealthy=2, Unhealthy=3.
+          Reflects health of the receiver with regards to stream validity.
+      - id: streamStatusMessage
+        type: string
+        nullable: true
+        read_only: true
+        observable: true
+        description: Nullable reason for current streamStatus; null when no message.
+      - id: streamStatusTransitionCounter
+        type: numeric
+        read_only: true
+        observable: true
+        description: Increments each time streamStatus transitions to a less-healthy state.
+      - id: autoResetCountersAndMessages
+        type: bool
+        read_only: false
+        observable: false
+        description: >-
+          When true (default), all transition counters and status messages are reset
+          to their initial values on each receiver activation.
+
+    methods:
+      - id: GetLostPacketCounters
+        args: []
+        return_value:
+          type: object
+          is_array: true
+        description: >-
+          Returns a collection of lost-packet counters (NcCounter[]).
+          Devices without packet-loss detection capability MUST return an empty array.
+      - id: GetLatePacketCounters
+        args: []
+        return_value:
+          type: object
+          is_array: true
+        description: >-
+          Returns a collection of late-packet counters (NcCounter[]).
+          Devices without late-packet detection capability MUST return an empty array.
+      - id: ResetCountersAndMessages
+        args: []
+        return_value:
+          type: null
+        description: >-
+          Resets all status transition counter properties to 0 and all status message
+          properties to null per BCP-008-01 §Receiver status transition counters.

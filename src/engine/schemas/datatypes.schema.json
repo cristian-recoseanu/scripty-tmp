@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "uce:datatypes",
+  "title": "UCE Datatypes File",
+  "description": "Schema for datatypes.yaml — a list of DatatypeDefinitions (object shapes).",
+  "type": "object",
+  "required": ["datatypes"],
+  "additionalProperties": false,
+  "properties": {
+    "datatypes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/datatypeDefinition" }
+    }
+  },
+  "$defs": {
+    "baseType": {
+      "type": "string",
+      "enum": ["string", "bool", "numeric", "object"]
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "step": { "type": "number" },
+        "minLength": { "type": "integer", "minimum": 0 },
+        "maxLength": { "type": "integer", "minimum": 0 },
+        "pattern": { "type": "string" },
+        "minItems": { "type": "integer", "minimum": 0 },
+        "maxItems": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "fieldDef": {
+      "type": "object",
+      "required": ["id", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": { "$ref": "#/$defs/baseType" },
+        "is_array": { "type": "boolean" },
+        "type_def": { "type": "string" },
+        "nullable": { "type": "boolean" },
+        "constraints": { "$ref": "#/$defs/constraints" },
+        "description": { "type": "string" }
+      },
+      "if": { "properties": { "type": { "const": "object" } }, "required": ["type"] },
+      "then": { "required": ["type_def"] }
+    },
+    "datatypeDefinition": {
+      "type": "object",
+      "required": ["type_def", "fields"],
+      "additionalProperties": false,
+      "properties": {
+        "type_def": { "type": "string", "minLength": 1 },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/fieldDef" }
+        },
+        "description": { "type": "string" }
+      }
+    }
+  }
+}
