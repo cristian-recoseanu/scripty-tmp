@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "NcDatatypeDescriptor",
+  "title": "NcDatatypeDescriptor",
+  "description": "MS-05-02 datatype descriptor — Primitive, Struct, Enum, or Typedef. Enum/Typedef variants are required by NMOS Control Feature Sets (identification, monitoring, device-configuration).",
+  "oneOf": [
+    {
+      "title": "Primitive",
+      "type": "object",
+      "required": ["type", "name", "description", "constraints"],
+      "additionalProperties": false,
+      "properties": {
+        "type":        { "type": "integer", "const": 0 },
+        "name":        { "type": "string" },
+        "description": { "type": "string" },
+        "constraints": { "type": "null" }
+      }
+    },
+    {
+      "title": "Struct",
+      "type": "object",
+      "required": ["type", "name", "description", "fields", "parentType", "constraints"],
+      "additionalProperties": false,
+      "properties": {
+        "type":        { "type": "integer", "const": 2 },
+        "name":        { "type": "string" },
+        "description": { "type": "string" },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "typeName", "isNullable", "isSequence", "constraints", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "name":        { "type": "string" },
+              "typeName":    { "type": ["string", "null"] },
+              "isNullable":  { "type": "boolean" },
+              "isSequence":  { "type": "boolean" },
+              "constraints": { "type": "null" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "parentType":  { "type": ["string", "null"] },
+        "constraints": { "type": "null" }
+      }
+    },
+    {
+      "title": "Enum",
+      "description": "Enum datatype — used by NMOS Control Feature Sets (e.g. NcOverallStatus, NcLinkStatus, NcRestoreMode).",
+      "type": "object",
+      "required": ["type", "name", "description", "items", "constraints"],
+      "additionalProperties": false,
+      "properties": {
+        "type":        { "type": "integer", "const": 3 },
+        "name":        { "type": "string" },
+        "description": { "type": "string" },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "value", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "name":        { "type": "string" },
+              "value":       { "type": "integer" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "constraints": { "type": "null" }
+      }
+    },
+    {
+      "title": "Typedef",
+      "description": "Typedef datatype — alias for another named type.",
+      "type": "object",
+      "required": ["type", "name", "description", "parentType", "constraints"],
+      "additionalProperties": false,
+      "properties": {
+        "type":        { "type": "integer", "const": 1 },
+        "name":        { "type": "string" },
+        "description": { "type": "string" },
+        "parentType":  { "type": "string" },
+        "constraints": { "type": "null" }
+      }
+    }
+  ]
+}

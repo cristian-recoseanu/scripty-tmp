@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "NcElementId",
+  "title": "NcElementId",
+  "description": "MS-05-02 element identifier (level + index).",
+  "type": "object",
+  "required": ["level", "index"],
+  "additionalProperties": false,
+  "properties": {
+    "level": { "type": "integer", "minimum": 1 },
+    "index": { "type": "integer", "minimum": 1 }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "IS12SubscriptionResponse",
+  "title": "IS12SubscriptionResponse",
+  "description": "IS-12 SubscriptionResponse wire message (messageType=4).",
+  "type": "object",
+  "required": ["messageType", "subscriptions"],
+  "additionalProperties": false,
+  "properties": {
+    "messageType": { "type": "integer", "const": 4 },
+    "subscriptions": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1 }
+    }
+  }
+}

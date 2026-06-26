@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "IS12Notification",
+  "title": "IS12Notification",
+  "description": "IS-12 Notification wire message (messageType=2).",
+  "type": "object",
+  "required": ["messageType", "notifications"],
+  "additionalProperties": false,
+  "properties": {
+    "messageType": { "type": "integer", "const": 2 },
+    "notifications": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["oid", "eventId", "eventData"],
+        "additionalProperties": false,
+        "properties": {
+          "oid": { "type": "integer", "minimum": 1 },
+          "eventId": {
+            "type": "object",
+            "required": ["level", "index"],
+            "additionalProperties": false,
+            "properties": {
+              "level": { "type": "integer", "minimum": 1 },
+              "index": { "type": "integer", "minimum": 1 }
+            }
+          },
+          "eventData": {
+            "type": "object",
+            "required": ["propertyId", "changeType", "value", "sequenceItemIndex"],
+            "additionalProperties": false,
+            "properties": {
+              "propertyId": {
+                "type": "object",
+                "required": ["level", "index"],
+                "additionalProperties": false,
+                "properties": {
+                  "level": { "type": "integer", "minimum": 1 },
+                  "index": { "type": "integer", "minimum": 1 }
+                }
+              },
+              "changeType": { "type": "integer", "enum": [0, 1, 2, 3] },
+              "value": {},
+              "sequenceItemIndex": { "type": ["integer", "null"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

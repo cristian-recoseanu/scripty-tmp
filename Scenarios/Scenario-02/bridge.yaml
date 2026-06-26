@@ -1,0 +1,50 @@
+instance:
+  name: scenario-02
+  logLevel: info
+
+model:
+  entities: model/entities.yaml
+  datatypes: model/datatypes.yaml
+  tree: model/tree.yaml
+
+# The top-level `mapping` field on each adapter block is used by the bridge
+# loader for cross-validation. The MQTT adapter additionally reads `mapping`
+# from inside its own `config:` block (resolved relative to cwd).
+ingress:
+  id: mqtt-ingress
+  protocol: mqtt
+  mapping: mapping/ingress.mqtt.json
+  config:
+    url: "${MQTT_BROKER_URL:-mqtt://localhost:1883}"
+    clientId: scenario-02-bridge
+    subscriptions:
+      - topicFilter: devices/device-01/receivers/rx-1/link-status
+        qos: 0
+    mapping: mapping/ingress.mqtt.json
+
+egress:
+  - id: is12-egress
+    protocol: nmos-is12
+    mapping: mapping/egress.is12.json
+    config:
+      # When is04.nodeApi.enabled is true the IS-04 HTTP server and the IS-12
+      # WebSocket share a single port (httpPort below). wsPort is only used in
+      # standalone mode (is04.nodeApi.enabled: false). Setting it to the same
+      # value avoids confusion when reading logs or configuring test tools.
+      wsPort: 9004
+      host: "0.0.0.0"
+      wsPath: "/x-nmos/ncp/v1.0"
+      instanceName: scenario-02
+      is04:
+        label: "Scenario-02 Protocol Bridge"
+        description: "MQTT numeric → IS-12 NcReceiverMonitor linkStatus"
+        nodeApi:
+          enabled: true
+          httpPort: 9004
+          host: "0.0.0.0"
+          advertiseHost: "localhost"
+        # registration is disabled — node is self-hosted via the Node API above
+        # and does not push resources to an NMOS Registry.
+        # To enable: set enabled: true and supply host/port for the Registry API.
+        registration:
+          enabled: false

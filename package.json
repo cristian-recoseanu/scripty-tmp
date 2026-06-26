@@ -1,0 +1,61 @@
+{
+  "name": "protocol-bridge",
+  "version": "0.1.0",
+  "description": "Protocol-neutral bridge: Ingress (e.g. MQTT) → UCE → Egress (e.g. NMOS IS-12)",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "start": "node dist/app.js",
+    "dev": "tsx watch src/app.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "arch:check": "depcruise src --config .dependency-cruiser.cjs",
+    "arch:check:guard": "depcruise test/arch/engine-adapter-boundary.guard.ts --config .dependency-cruiser.guard.cjs; test $? -ne 0 && echo 'GUARD OK: violation correctly detected' || (echo 'GUARD FAIL: violation was not detected' && exit 1)",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "validate": "npm run typecheck && npm run lint && npm run arch:check && npm run coverage",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "mqtt": "^5.10.1",
+    "pino": "^9.6.0",
+    "ws": "^8.18.0",
+    "yaml": "^2.7.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "@types/ws": "^8.5.13",
+    "@typescript-eslint/eslint-plugin": "^8.32.0",
+    "@typescript-eslint/parser": "^8.32.0",
+    "@vitest/coverage-v8": "^3.2.0",
+    "dependency-cruiser": "^16.10.0",
+    "eslint": "^8.57.0",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-import": "^2.31.0",
+    "fast-check": "^4.8.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
+    "prettier": "^3.5.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,yaml,yml,md}": [
+      "prettier --write"
+    ]
+  }
+}

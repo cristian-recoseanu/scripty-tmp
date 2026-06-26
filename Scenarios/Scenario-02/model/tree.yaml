@@ -1,0 +1,41 @@
+location: root
+entity_def: RootBlock
+properties: []
+children:
+  - location: receiver-monitors
+    entity_def: ReceiverMonitorsBlock
+    properties: []
+    children:
+      - location: rx-monitor-01
+        entity_def: ReceiverMonitor
+        properties:
+          # NcStatusMonitor level-3 initial state
+          - id: overallStatus
+            value: 0        # NcOverallStatus.Inactive — no active stream connection yet
+          - id: statusReportingDelay
+            value: 3        # BCP-008-01 mandatory default: 3 seconds
+          # NcReceiverMonitor level-4 initial state
+          - id: linkStatus
+            value: 1        # NcLinkStatus.AllUp — physical interfaces assumed up at start
+          - id: linkStatusTransitionCounter
+            value: 0
+          - id: connectionStatus
+            value: 0        # NcConnectionStatus.Inactive — no active transport connection
+          - id: connectionStatusTransitionCounter
+            value: 0
+          - id: externalSynchronizationStatus
+            value: 0        # NcSynchronizationStatus.NotUsed — bridge does not use external sync
+          - id: externalSynchronizationStatusTransitionCounter
+            value: 0
+          - id: synchronizationSourceId
+            value: "internal"  # BCP-008-01: devices not using external sync MUST set to "internal"
+          - id: streamStatus
+            value: 0        # NcStreamStatus.Inactive — no stream being received
+          - id: streamStatusTransitionCounter
+            value: 0
+          - id: autoResetCountersAndMessages
+            value: true     # BCP-008-01 default: auto-reset on receiver activation
+          # Message properties (overallStatusMessage, linkStatusMessage, connectionStatusMessage,
+          # externalSynchronizationStatusMessage, streamStatusMessage) are intentionally
+          # omitted here — they default to null (nullable: true) until set by the source device.
+        children: []

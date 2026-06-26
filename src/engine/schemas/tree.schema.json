@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "uce:tree",
+  "title": "UCE Instance Tree File",
+  "description": "Schema for tree.yaml — the root InstanceNode of the device model.",
+  "$ref": "#/$defs/instanceNode",
+  "$defs": {
+    "modelValue": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "boolean" },
+        { "type": "number" },
+        { "type": "null" },
+        { "type": "object" },
+        { "type": "array" }
+      ]
+    },
+    "propertyValue": {
+      "type": "object",
+      "required": ["id", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "value": { "$ref": "#/$defs/modelValue" }
+      }
+    },
+    "methodArgValue": {
+      "type": "object",
+      "required": ["id", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "value": { "$ref": "#/$defs/modelValue" }
+      }
+    },
+    "methodValue": {
+      "type": "object",
+      "required": ["id"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "args": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/methodArgValue" }
+        },
+        "return_value": {
+          "type": "object",
+          "properties": {
+            "value": { "$ref": "#/$defs/modelValue" }
+          }
+        }
+      }
+    },
+    "instanceNode": {
+      "type": "object",
+      "required": ["location", "entity_def", "properties", "methods", "children"],
+      "additionalProperties": false,
+      "properties": {
+        "location": { "type": "string", "minLength": 1 },
+        "entity_def": { "type": "string", "minLength": 1 },
+        "properties": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/propertyValue" }
+        },
+        "methods": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/methodValue" }
+        },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/instanceNode" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Test coverage
+coverage/
+
+# Project docs (local planning / notes)
+docs/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Vitest cache
+.vitest/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Optional local tooling
+.npm
+.eslintcache
