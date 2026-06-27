@@ -14,16 +14,18 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { connectAsync } from 'mqtt';
-import type { IClientOptions, MqttClient } from 'mqtt';
+
+
+import { IngressMapper } from '../../mapping/IngressMapper.js';
+import { IngressMappingSchema } from '../../mapping/types.js';
+
+import { MQTT_CONFIG_JSON_SCHEMA, MqttAdapterConfigSchema } from './config.js';
 
 import type { PropertyChangedOp } from '../../engine/bus/operations.js';
 import type { ModelValue } from '../../engine/model/ObjectNode.js';
-import { IngressMapper } from '../../mapping/IngressMapper.js';
-import { IngressMappingSchema } from '../../mapping/types.js';
 import type { Adapter, AdapterContext, AdapterFactory, HealthStatus, JSONSchema } from '../Adapter.js';
-
 import type { MqttAdapterConfig } from './config.js';
-import { MQTT_CONFIG_JSON_SCHEMA, MqttAdapterConfigSchema } from './config.js';
+import type { IClientOptions, MqttClient } from 'mqtt';
 
 // ---------------------------------------------------------------------------
 // Correlation id helper
@@ -59,7 +61,7 @@ export class MqttIngressAdapter implements Adapter {
   private _health: HealthStatus = { state: 'initialising' };
   private _busSub: { unsubscribe(): void } | null = null;
   /** Reconnect delay (ms) — grows up to reconnectMaxMs. */
-  private _reconnectDelay: number = 1000;
+  private _reconnectDelay = 1000;
   /** Debounce timers keyed by topic. */
   private readonly _debounce = new Map<string, DebounceEntry>();
   /** Count of messages dropped due to unresolved targets (E10.T4). */

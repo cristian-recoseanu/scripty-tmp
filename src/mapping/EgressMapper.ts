@@ -5,9 +5,9 @@
  * Reports gaps (unmapped UCE properties/methods) at load time.
  */
 
+import type { EgressMapping, EgressClassMapping, NcTouchpoint } from './types.js';
 import type { EntityRegistry } from '../engine/types/EntityRegistry.js';
 
-import type { EgressMapping, EgressClassMapping, NcTouchpoint } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Gap report

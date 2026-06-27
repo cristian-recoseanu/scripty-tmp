@@ -148,9 +148,9 @@ describe('E7.T1 — interpolateEnv', () => {
 
   it('handles nested object with mixed types', () => {
     const result = interpolateEnv({ a: '${X}', b: 1, c: true }, { X: 'val' }) as Record<string, unknown>;
-    expect(result['a']).toBe('val');
-    expect(result['b']).toBe(1);
-    expect(result['c']).toBe(true);
+    expect(result.a).toBe('val');
+    expect(result.b).toBe(1);
+    expect(result.c).toBe(true);
   });
 });
 
@@ -246,7 +246,7 @@ egress:
     const path = write(dir, 'bridge.yaml', yaml);
     const cfg = loadBridgeConfig(path, { BRIDGE_NAME: 'my-bridge', MQTT_USER: 'alice' });
     expect(cfg.instance.name).toBe('my-bridge');
-    expect(cfg.ingress.config['user']).toBe('alice');
+    expect(cfg.ingress.config.user).toBe('alice');
   });
 
   it('throws ConfigError for missing env var', () => {

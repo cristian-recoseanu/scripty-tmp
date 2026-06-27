@@ -9,7 +9,6 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
 import { Is12EgressAdapter } from '../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import { OID_ROOT } from '../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
 import {
@@ -18,7 +17,6 @@ import {
   NC_SENDER_MONITOR_METHOD,
 } from '../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 import { NcMethodStatus } from '../../src/adapters/nmos-is12/ms05/types.js';
-import type { NcBlockMemberDescriptor } from '../../src/adapters/nmos-is12/ms05/types.js';
 import { loadBridgeConfig } from '../../src/config/loader.js';
 import { loadEntities, loadDatatypes, loadTree } from '../../src/config/modelLoader.js';
 import { makeSetPropertyOp } from '../../src/engine/bus/operations.js';
@@ -26,6 +24,9 @@ import { UceBus } from '../../src/engine/bus/UceBus.js';
 import { UceEngine } from '../../src/engine/UceEngine.js';
 import { EgressMappingSchema, IngressMappingSchema } from '../../src/mapping/types.js';
 import { Is12Client } from '../helpers/Is12Client.js';
+
+import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
+import type { NcBlockMemberDescriptor } from '../../src/adapters/nmos-is12/ms05/types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SCENARIO_DIR = resolve(__dirname, '../../Scenarios/Scenario-03');
@@ -151,7 +152,7 @@ describe('E19.T10 — Scenario-03 live IS-12 + IS-04', () => {
       arguments: { id: { level: 1, index: 7 } },
     });
     const rxTps = (rxResp.responses[0]?.result as {
-      value: Array<{ contextNamespace: string; resource: { resourceType: string; id: string } }>;
+      value: { contextNamespace: string; resource: { resourceType: string; id: string } }[];
     }).value;
     expect(rxTps).toHaveLength(1);
     expect(rxTps[0]!.contextNamespace).toBe('x-nmos');
@@ -164,7 +165,7 @@ describe('E19.T10 — Scenario-03 live IS-12 + IS-04', () => {
       arguments: { id: { level: 1, index: 7 } },
     });
     const txTps = (txResp.responses[0]?.result as {
-      value: Array<{ contextNamespace: string; resource: { resourceType: string; id: string } }>;
+      value: { contextNamespace: string; resource: { resourceType: string; id: string } }[];
     }).value;
     expect(txTps).toHaveLength(1);
     expect(txTps[0]!.resource.resourceType).toBe('sender');

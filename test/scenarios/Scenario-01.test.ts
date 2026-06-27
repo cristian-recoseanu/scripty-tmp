@@ -20,7 +20,6 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
 import { MqttAdapterConfigSchema } from '../../src/adapters/mqtt/config.js';
 import { Is12AdapterConfigSchema } from '../../src/adapters/nmos-is12/config.js';
 import { Is12EgressAdapter } from '../../src/adapters/nmos-is12/Is12EgressAdapter.js';
@@ -35,12 +34,14 @@ import {
   NC_CLASS_MANAGER_METHOD,
 } from '../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 import { NcMethodStatus } from '../../src/adapters/nmos-is12/ms05/types.js';
-import type { NcBlockMemberDescriptor } from '../../src/adapters/nmos-is12/ms05/types.js';
 import { loadBridgeConfig } from '../../src/config/loader.js';
 import { loadEntities, loadDatatypes, loadTree } from '../../src/config/modelLoader.js';
 import { UceBus } from '../../src/engine/bus/UceBus.js';
 import { IngressMappingSchema } from '../../src/mapping/types.js';
 import { Is12Client } from '../helpers/Is12Client.js';
+
+import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
+import type { NcBlockMemberDescriptor } from '../../src/adapters/nmos-is12/ms05/types.js';
 
 // ---------------------------------------------------------------------------
 // Paths
@@ -248,7 +249,7 @@ describe('E16.T3 + T4 — IS-12 live adapter (userLabel + mandatory managers)', 
 
   it('T3 — egress.is12.json validates against Is12AdapterConfigSchema (egress mapping file is valid JSON)', () => {
     const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'egress.is12.json'), 'utf8')) as unknown;
-    const mapping = raw as { version: number; classes: Array<{ entityDef: string; classId: number[] }> };
+    const mapping = raw as { version: number; classes: { entityDef: string; classId: number[] }[] };
     expect(mapping.version).toBe(1);
     expect(mapping.classes[0]?.entityDef).toBe('RootBlock');
     expect(mapping.classes[0]?.classId).toEqual([1, 1]);

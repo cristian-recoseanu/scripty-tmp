@@ -11,7 +11,6 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 import { Is12EgressAdapter } from '../../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import {
   OID_ROOT,
@@ -25,17 +24,19 @@ import {
   NC_OBJECT_PROPERTY,
 } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 import { NcMethodStatus } from '../../../src/adapters/nmos-is12/ms05/types.js';
-import type {
-  NcBlockMemberDescriptor,
-  NcClassDescriptor,
-  NcDatatypeDescriptor,
-} from '../../../src/adapters/nmos-is12/ms05/types.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
 import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
 import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
 import { Is12Client } from '../../helpers/Is12Client.js';
+
+import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
+import type {
+  NcBlockMemberDescriptor,
+  NcClassDescriptor,
+  NcDatatypeDescriptor,
+} from '../../../src/adapters/nmos-is12/ms05/types.js';
 
 // ---------------------------------------------------------------------------
 // Port allocation

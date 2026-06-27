@@ -4,18 +4,19 @@
 
 import { describe, it, expect } from 'vitest';
 
-import type { PropertyChangedOp } from '../../src/engine/bus/operations.js';
 import {
   makeMethodInvokeOp,
   makePropertyChangedOp,
   makeSetPropertyOp,
 } from '../../src/engine/bus/operations.js';
 import { UceBus } from '../../src/engine/bus/UceBus.js';
-import type { MethodDescriptor, PropertyDescriptor } from '../../src/engine/model/ObjectNode.js';
-import type { MethodHandler } from '../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceNodeImpl } from '../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../src/engine/model/ObjectTree.js';
 import { UceEngine } from '../../src/engine/UceEngine.js';
+
+import type { PropertyChangedOp } from '../../src/engine/bus/operations.js';
+import type { MethodDescriptor, PropertyDescriptor } from '../../src/engine/model/ObjectNode.js';
+import type { MethodHandler } from '../../src/engine/model/ObjectNodeImpl.js';
 
 // ---------------------------------------------------------------------------
 // Test fixture helpers
@@ -42,8 +43,8 @@ function buildTestTree(): { tree: InstanceTree; root: InstanceNodeImpl } {
   const handlers = new Map<string, MethodHandler>([
     ['reset', () => Promise.resolve({ status: 200 })],
     ['add', (args) => {
-      const a = args['a'] as number;
-      const b = args['b'] as number;
+      const a = args.a as number;
+      const b = args.b as number;
       return Promise.resolve({ status: 200, value: a + b });
     }],
   ]);
@@ -424,7 +425,7 @@ describe('E6.T1 — bus-driven silent failures', () => {
     await new Promise((r) => setTimeout(r, 0));
     expect(results).toHaveLength(1);
     // The tree value should be updated.
-    const lookup = engine['_tree'].findById('root');
+    const lookup = engine._tree.findById('root');
     expect(lookup.ok && lookup.node.getProperty('status').value).toBe('on');
   });
 

@@ -13,12 +13,18 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import WebSocket from 'ws';
 
 
-import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 import { IS12_CONFIG_JSON_SCHEMA, Is12AdapterConfigSchema } from '../../../src/adapters/nmos-is12/config.js';
 import { Is12EgressAdapter, Is12AdapterFactory } from '../../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import { OID_DEVICE_MANAGER, OID_CLASS_MANAGER } from '../../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
 import { NC_OBJECT_METHOD, NC_CLASS_MANAGER_METHOD } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 import { IS12MessageType, NcMethodStatus } from '../../../src/adapters/nmos-is12/ms05/types.js';
+import { UceBus } from '../../../src/engine/bus/UceBus.js';
+import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
+import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
+import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
+import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
+
+import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 import type {
   IS12CommandMessage,
   IS12SubscriptionMessage,
@@ -27,11 +33,6 @@ import type {
   IS12NotificationMessage,
   IS12ErrorMessage,
 } from '../../../src/adapters/nmos-is12/ms05/types.js';
-import { UceBus } from '../../../src/engine/bus/UceBus.js';
-import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
-import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
-import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
-import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
 
 // ---------------------------------------------------------------------------
 // Port allocation — pick a base port unlikely to conflict

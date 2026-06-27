@@ -13,7 +13,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import WebSocket from 'ws';
 
-import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 import { Is12EgressAdapter } from '../../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import { OID_DEVICE_MANAGER } from '../../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
 import { NC_OBJECT_METHOD } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
@@ -22,17 +21,19 @@ import {
   NcMethodStatus,
   NcPropertyChangeType,
 } from '../../../src/adapters/nmos-is12/ms05/types.js';
-import type {
-  IS12CommandMessage,
-  IS12CommandResponseMessage,
-  IS12ErrorMessage,
-} from '../../../src/adapters/nmos-is12/ms05/types.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
 import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
 import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
 import { Is12Client } from '../../helpers/Is12Client.js';
+
+import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
+import type {
+  IS12CommandMessage,
+  IS12CommandResponseMessage,
+  IS12ErrorMessage,
+} from '../../../src/adapters/nmos-is12/ms05/types.js';
 
 // ---------------------------------------------------------------------------
 // Adapter setup helpers

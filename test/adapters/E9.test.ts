@@ -8,14 +8,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import type {
-  Adapter,
-  AdapterContext,
-  AdapterFactory,
-  AdapterLogger,
-  HealthStatus,
-  JSONSchema,
-} from '../../src/adapters/index.js';
 import {
   AdapterRegistry,
   AdapterRegistryError,
@@ -27,6 +19,15 @@ import { InstanceNodeImpl } from '../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../src/engine/model/ObjectTree.js';
 import { DatatypeRegistry } from '../../src/engine/types/DatatypeRegistry.js';
 import { EntityRegistry } from '../../src/engine/types/EntityRegistry.js';
+
+import type {
+  Adapter,
+  AdapterContext,
+  AdapterFactory,
+  AdapterLogger,
+  HealthStatus,
+  JSONSchema,
+} from '../../src/adapters/index.js';
 
 // ---------------------------------------------------------------------------
 // Helpers

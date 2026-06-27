@@ -14,12 +14,13 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 import { Ajv } from 'ajv';
-import type { ErrorObject } from 'ajv';
 import { parse as parseYaml } from 'yaml';
 import { ZodError } from 'zod';
 
-import type { ParsedBridgeConfig } from './types.js';
 import { BridgeConfigSchema } from './types.js';
+
+import type { ParsedBridgeConfig } from './types.js';
+import type { ErrorObject } from 'ajv';
 
 // ---------------------------------------------------------------------------
 // ConfigError

@@ -73,7 +73,7 @@ function _marshalValue(value: ModelValue): ModelValue {
   if (typeof value === 'number') return value;
   if (Array.isArray(value)) return value.map(_marshalValue);
   // object — sort keys for determinism
-  const sorted: { [key: string]: ModelValue } = {};
+  const sorted: Record<string, ModelValue> = {};
   for (const key of Object.keys(value).sort()) {
     const v = value[key];
     sorted[key] = v !== undefined ? _marshalValue(v) : null;
@@ -156,7 +156,7 @@ export function unmarshal(raw: unknown, slot: SlotDescriptor): UnmarshalResult {
         return { ok: false, reason: `Expected object but received ${typeof raw}` };
       }
       // Deep-clone with key sorting for determinism
-      const result: { [key: string]: ModelValue } = {};
+      const result: Record<string, ModelValue> = {};
       for (const key of Object.keys(raw).sort()) {
         const v = (raw as Record<string, unknown>)[key];
         const inner = _unmarshalUnknown(v);
@@ -195,7 +195,7 @@ function _unmarshalUnknown(raw: unknown): UnmarshalOk | UnmarshalError {
     return { ok: true, value: items, warnings };
   }
   if (typeof raw === 'object') {
-    const result: { [key: string]: ModelValue } = {};
+    const result: Record<string, ModelValue> = {};
     for (const key of Object.keys(raw).sort()) {
       const v = (raw as Record<string, unknown>)[key];
       const r = _unmarshalUnknown(v);

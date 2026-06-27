@@ -10,7 +10,6 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 import { Is12EgressAdapter } from '../../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import { OID_ROOT } from '../../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
 import {
@@ -19,11 +18,13 @@ import {
   NC_SENDER_MONITOR_METHOD,
 } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 import { NcMethodStatus } from '../../../src/adapters/nmos-is12/ms05/types.js';
-import type { NcBlockMemberDescriptor } from '../../../src/adapters/nmos-is12/ms05/types.js';
 import { loadEntities, loadDatatypes, loadTree } from '../../../src/config/modelLoader.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
 import { UceEngine } from '../../../src/engine/UceEngine.js';
 import { Is12Client } from '../../helpers/Is12Client.js';
+
+import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
+import type { NcBlockMemberDescriptor } from '../../../src/adapters/nmos-is12/ms05/types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SCENARIO_DIR = resolve(__dirname, '../../../Scenarios/Scenario-03');
@@ -121,7 +122,7 @@ describe('BCP-008-02 — NcSenderMonitor compliance', () => {
   });
 
   it('domain statuses are valid enum values', async () => {
-    const checks: Array<{ id: { level: number; index: number }; allowed: number[] }> = [
+    const checks: { id: { level: number; index: number }; allowed: number[] }[] = [
       { id: P.linkStatus, allowed: Object.values(NcLinkStatus) as number[] },
       { id: P.transmissionStatus, allowed: Object.values(NcTransmissionStatus) as number[] },
       { id: P.externalSynchronizationStatus, allowed: Object.values(NcSynchronizationStatus) as number[] },
@@ -173,7 +174,7 @@ describe('BCP-008-02 — NcSenderMonitor compliance', () => {
       methodId: NC_OBJECT_METHOD.Get,
       arguments: { id: P.touchpoints },
     });
-    const tps = (resp.responses[0]?.result as { value: Array<{ contextNamespace: string; resource: { resourceType: string; id: string } }> }).value;
+    const tps = (resp.responses[0]?.result as { value: { contextNamespace: string; resource: { resourceType: string; id: string } }[] }).value;
     expect(tps).toHaveLength(1);
     expect(tps[0]!.contextNamespace).toBe('x-nmos');
     expect(tps[0]!.resource.resourceType).toBe('sender');

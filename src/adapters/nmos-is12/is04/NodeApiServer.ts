@@ -218,7 +218,7 @@ export class NodeApiServer {
       return;
     }
 
-    const emptyMatch = norm.match(/^\/x-nmos\/node\/v1\.3\/([^/]+)\/$/);
+    const emptyMatch = /^\/x-nmos\/node\/v1\.3\/([^/]+)\/$/.exec(norm);
     if (emptyMatch !== null) {
       const collection = emptyMatch[1] ?? '';
       if (EMPTY_COLLECTIONS.has(collection)) {

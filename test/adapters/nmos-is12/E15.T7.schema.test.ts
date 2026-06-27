@@ -20,7 +20,6 @@ import { createRequire } from 'module';
 import Ajv from 'ajv';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 import { Is12EgressAdapter } from '../../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import {
   OID_ROOT,
@@ -41,6 +40,8 @@ import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
 import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
 import { Is12Client } from '../../helpers/Is12Client.js';
+
+import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 
 // ---------------------------------------------------------------------------
 // Schema loading
@@ -275,7 +276,7 @@ describe('E15.T7 — NcClassDescriptor schema conformance', () => {
       methodId: NC_BLOCK_METHOD.GetMemberDescriptors,
       arguments: { recurse: true },
     });
-    const members = (listResp.responses[0]?.result as { value: Array<{ classId: number[] }> }).value;
+    const members = (listResp.responses[0]?.result as { value: { classId: number[] }[] }).value;
     expect(members.length).toBeGreaterThan(0);
 
     for (const m of members) {

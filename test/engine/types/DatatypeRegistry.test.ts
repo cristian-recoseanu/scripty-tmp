@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
-import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
 import {
   DatatypeRegistry,
   DatatypeRegistryError,
 } from '../../../src/engine/types/DatatypeRegistry.js';
+
+import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
 
 // ---------------------------------------------------------------------------
 // Fixtures

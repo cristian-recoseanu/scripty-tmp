@@ -10,7 +10,6 @@
 
 import { dirname, resolve } from 'node:path';
 
-import type { Adapter, AdapterContext } from './adapters/Adapter.js';
 import { AdapterRegistry } from './adapters/AdapterRegistry.js';
 import { MqttAdapterFactory } from './adapters/mqtt/index.js';
 import { Is12AdapterFactory } from './adapters/nmos-is12/index.js';
@@ -19,6 +18,8 @@ import { loadDatatypes, loadEntities, loadTree } from './config/modelLoader.js';
 import { UceBus } from './engine/bus/UceBus.js';
 import { UceEngine } from './engine/UceEngine.js';
 import { BridgeLogger } from './observability/BridgeLogger.js';
+
+import type { Adapter, AdapterContext } from './adapters/Adapter.js';
 import type { LogLevel } from './observability/BridgeLogger.js';
 
 // ---------------------------------------------------------------------------
@@ -27,7 +28,7 @@ import type { LogLevel } from './observability/BridgeLogger.js';
 
 function getConfigPath(): string {
   const arg = process.argv[2];
-  const env = process.env['BRIDGE_CONFIG'];
+  const env = process.env.BRIDGE_CONFIG;
   const raw = arg ?? env;
   if (raw === undefined || raw.trim() === '') {
     throw new Error(
@@ -47,8 +48,8 @@ function resolveConfigPaths(
   config: Record<string, unknown>,
   configDir: string,
 ): Record<string, unknown> {
-  if (typeof config['mapping'] === 'string' && !config['mapping'].startsWith('/')) {
-    return { ...config, mapping: resolve(configDir, config['mapping']) };
+  if (typeof config.mapping === 'string' && !config.mapping.startsWith('/')) {
+    return { ...config, mapping: resolve(configDir, config.mapping) };
   }
   return config;
 }
@@ -87,7 +88,7 @@ async function main(): Promise<void> {
   adapterRegistry.register(MqttAdapterFactory);
   adapterRegistry.register(Is12AdapterFactory);
 
-  const adapterSpecs: Array<{ adapter: Adapter; config: Record<string, unknown> }> = [
+  const adapterSpecs: { adapter: Adapter; config: Record<string, unknown> }[] = [
     {
       adapter: adapterRegistry.create(cfg.ingress.id, 'ingress', cfg.ingress.protocol, cfg.ingress.config),
       // Inject the adapter-level mapping path into the config so adapters that

@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
-import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
-import type { EntityDefinition } from '../../../src/engine/types/EntityDefinition.js';
 import { EntityRegistry, EntityRegistryError } from '../../../src/engine/types/EntityRegistry.js';
+
+import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
+import type { EntityDefinition } from '../../../src/engine/types/EntityDefinition.js';
+
 
 // ---------------------------------------------------------------------------
 // Fixtures — mirrors MyRoot-entity-definition.json

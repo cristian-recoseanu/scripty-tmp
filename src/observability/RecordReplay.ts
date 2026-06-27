@@ -11,11 +11,11 @@
  */
 
 import { createReadStream, createWriteStream } from 'node:fs';
-import type { WriteStream } from 'node:fs';
 import { createInterface } from 'node:readline';
 
 import type { Operation } from '../engine/bus/operations.js';
 import type { UceBus, Subscription } from '../engine/bus/UceBus.js';
+import type { WriteStream } from 'node:fs';
 
 // ---------------------------------------------------------------------------
 // Recorder

@@ -27,6 +27,7 @@ import {
   EgressMapper,
   renderReverse,
 } from '../../src/mapping/index.js';
+
 import type { IngressMapping, MapperLogger } from '../../src/mapping/index.js';
 
 // ---------------------------------------------------------------------------

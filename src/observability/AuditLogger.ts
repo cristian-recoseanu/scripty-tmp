@@ -6,10 +6,10 @@
  * single ingress event traceable end-to-end via correlationId.
  */
 
+import type { BridgeLogger } from './BridgeLogger.js';
 import type { Operation } from '../engine/bus/operations.js';
 import type { UceBus, Subscription } from '../engine/bus/UceBus.js';
 
-import type { BridgeLogger } from './BridgeLogger.js';
 
 // ---------------------------------------------------------------------------
 // AuditLogger

@@ -9,19 +9,20 @@ import { randomUUID } from 'node:crypto';
 
 import { expect } from 'vitest';
 
-import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
 import { makePropertyChangedOp, makeSetPropertyOp } from '../../src/engine/bus/operations.js';
+import { UceBus } from '../../src/engine/bus/UceBus.js';
+import { InstanceNodeImpl } from '../../src/engine/model/ObjectNodeImpl.js';
+import { InstanceTree } from '../../src/engine/model/ObjectTree.js';
+import { DatatypeRegistry } from '../../src/engine/types/DatatypeRegistry.js';
+import { EntityRegistry } from '../../src/engine/types/EntityRegistry.js';
+
+import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
 import type {
   Operation,
   PropertyChangedOp,
   SetPropertyOp,
 } from '../../src/engine/bus/operations.js';
-import { UceBus } from '../../src/engine/bus/UceBus.js';
 import type { ModelValue, PropertyDescriptor } from '../../src/engine/model/ObjectNode.js';
-import { InstanceNodeImpl } from '../../src/engine/model/ObjectNodeImpl.js';
-import { InstanceTree } from '../../src/engine/model/ObjectTree.js';
-import { DatatypeRegistry } from '../../src/engine/types/DatatypeRegistry.js';
-import { EntityRegistry } from '../../src/engine/types/EntityRegistry.js';
 
 // ---------------------------------------------------------------------------
 // Silent logger
@@ -235,10 +236,10 @@ expect.extend({
   ) {
     const op = received as Record<string, unknown>;
     const pass =
-      op['op'] === 'propertyChanged' &&
-      op['nodeId'] === nodeId &&
-      op['property'] === property &&
-      op['value'] === value;
+      op.op === 'propertyChanged' &&
+      op.nodeId === nodeId &&
+      op.property === property &&
+      op.value === value;
     return {
       pass,
       message: () =>
@@ -250,25 +251,25 @@ expect.extend({
 
   toHaveOrigin(received: unknown, origin: string) {
     const op = received as Record<string, unknown>;
-    const pass = op['origin'] === origin;
+    const pass = op.origin === origin;
     return {
       pass,
       message: () =>
         pass
           ? `Expected op NOT to have origin '${origin}'`
-          : `Expected origin '${origin}' but got '${String(op['origin'])}'`,
+          : `Expected origin '${origin}' but got '${String(op.origin)}'`,
     };
   },
 
   toHaveCorrelationId(received: unknown, id: string) {
     const op = received as Record<string, unknown>;
-    const pass = op['correlationId'] === id;
+    const pass = op.correlationId === id;
     return {
       pass,
       message: () =>
         pass
           ? `Expected op NOT to have correlationId '${id}'`
-          : `Expected correlationId '${id}' but got '${String(op['correlationId'])}'`,
+          : `Expected correlationId '${id}' but got '${String(op.correlationId)}'`,
     };
   },
 });

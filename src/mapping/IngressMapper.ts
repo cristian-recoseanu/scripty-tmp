@@ -7,17 +7,18 @@
  * Reverse mapping produces a rendered topic + payload for write-back.
  */
 
-import type { ModelValue } from '../engine/model/ObjectNode.js';
-import type { InstanceTree } from '../engine/model/ObjectTree.js';
 
 import { decode } from './decoders.js';
 import { applyTransforms } from './transforms.js';
-import type { IngressMapping, IngressRule, ReverseDescriptor } from './types.js';
 import {
   extractCaptures,
   interpolateLocation,
   parseTopicFilter,
 } from './types.js';
+
+import type { IngressMapping, IngressRule, ReverseDescriptor } from './types.js';
+import type { ModelValue } from '../engine/model/ObjectNode.js';
+import type { InstanceTree } from '../engine/model/ObjectTree.js';
 
 // ---------------------------------------------------------------------------
 // Logger interface (injected; avoids no-console lint)
@@ -89,7 +90,7 @@ export class IngressMapper {
    */
   map(topic: string, payload: Buffer | string): MapOutcome {
     for (const rule of this._rules) {
-      const topicFilter = rule.match['topicFilter'];
+      const topicFilter = rule.match.topicFilter;
       if (typeof topicFilter !== 'string') continue;
 
       const parsed = parseTopicFilter(topicFilter);
@@ -248,7 +249,7 @@ export function extractCapturesFromLocation(
     .split('/')
     .map((seg) => {
       const m = /^\{([A-Za-z_][A-Za-z0-9_]*)\}$/.exec(seg);
-      if (m !== null && m[1] !== undefined) {
+      if (m?.[1] !== undefined) {
         names.push(m[1]);
         return `(?<${m[1]}>[^/]+)`;
       }

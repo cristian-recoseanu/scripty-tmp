@@ -10,13 +10,14 @@ import { describe, it, expect } from 'vitest';
 import { buildCatalogue } from '../../../src/adapters/nmos-is12/ms05/catalogue.js';
 import { IdentityRegistry, OID_DEVICE_MANAGER, OID_CLASS_MANAGER } from '../../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
 import { dispatch, NC_OBJECT_METHOD, NC_CLASS_MANAGER_METHOD } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
-import type { DispatchContext, PropertyIdMap } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 import { NcMethodStatus } from '../../../src/adapters/nmos-is12/ms05/types.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
 import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
 import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
+
+import type { DispatchContext, PropertyIdMap } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 
 
 // ---------------------------------------------------------------------------

@@ -13,10 +13,12 @@ import {
   OID_DEVICE_MANAGER,
   OID_CLASS_MANAGER,
 } from '../../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
-import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
-import type { EntityDefinition } from '../../../src/engine/types/EntityDefinition.js';
 import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
+
+import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
+import type { EntityDefinition } from '../../../src/engine/types/EntityDefinition.js';
+
 
 // ---------------------------------------------------------------------------
 // Fixtures

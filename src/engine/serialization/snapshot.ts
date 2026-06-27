@@ -14,9 +14,10 @@
  * No protocol-specific identifiers may appear in this file.
  */
 
-import type { ModelValue, SerializedNode } from '../model/ObjectNode.js';
 import { InstanceNodeImpl } from '../model/ObjectNodeImpl.js';
 import { InstanceTree } from '../model/ObjectTree.js';
+
+import type { ModelValue, SerializedNode } from '../model/ObjectNode.js';
 
 // ---------------------------------------------------------------------------
 // snapshot — E4.T4

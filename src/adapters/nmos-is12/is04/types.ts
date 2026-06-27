@@ -35,7 +35,7 @@ export interface Is04NodeService {
 
 export interface Is04NodeApi {
   versions: string[];
-  endpoints: Array<{ host: string; port: number; protocol: 'http' | 'https'; authorization: boolean }>;
+  endpoints: { host: string; port: number; protocol: 'http' | 'https'; authorization: boolean }[];
 }
 
 export interface Is04NodeClocks {

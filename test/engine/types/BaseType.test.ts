@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 
-import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
 import { validateBaseTypeValue } from '../../../src/engine/types/primitives.js';
+
+import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
 
 // ---------------------------------------------------------------------------
 // E3.T1 — BaseType vocabulary
