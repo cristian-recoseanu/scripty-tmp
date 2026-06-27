@@ -1,13 +1,13 @@
-# Protocol Bridge
+# scripty-tmp (Talk My Protocol)
 
-A configurable **Node.js + TypeScript** application that ingests data from one protocol, normalises it
-into a **protocol-neutral internal model**, and re-emits it through one or more other protocols.
+[![CI](https://github.com/cristian-recoseanu/scripty-tmp/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/cristian-recoseanu/scripty-tmp/actions/workflows/unit-tests.yml)
+
+A configurable **Node.js + TypeScript** framework for mapping data between protocols. It ingests
+from one or more **Ingress** adapters, normalises updates into a **protocol-neutral internal model**,
+and re-emits them through one or more **Egress** adapters.
 
 > **Phase 1** uses **MQTT** as the example Ingress and **NMOS IS-12 / MS-05** as the example Egress —
-> but these are just configuration. The core knows nothing about any specific protocol.
-
-For the full design see [`docs/Architecture.md`](docs/Architecture.md); for the implementation backlog
-see [`docs/TaskList.md`](docs/TaskList.md).
+> but these are configuration only. The core knows nothing about any specific protocol.
 
 ---
 
@@ -44,48 +44,44 @@ The engine **never** depends on an adapter or any protocol package. This one-way
 
 ## Requirements
 
-- **Node.js 20+ LTS** (see [`.nvmrc`](.nvmrc) — run `nvm use` if you use nvm)
+- **Node.js 20+ LTS**
 - **npm** (ships with Node)
 
 ## Getting started
 
 ```bash
-# 1. Use the pinned Node version (optional, if you use nvm)
-nvm use
-
-# 2. Install dependencies
 npm install
-
-# 3. Type-check and build
 npm run build
 ```
 
 ## Running
 
 ```bash
-# Run the built application
-npm start
+# Run the built application (requires a bridge config path)
+npm start -- Scenarios/Scenario-01/bridge.yaml
 
 # Or run in watch mode during development (no build step needed)
-npm run dev
+npm run dev -- Scenarios/Scenario-01/bridge.yaml
 ```
 
-> Phase 1 wiring (config loading, tree building, adapter startup) is implemented incrementally — see
-> the epics in [`docs/TaskList.md`](docs/TaskList.md). The entry point is [`src/app.ts`](src/app.ts).
+The entry point is [`src/app.ts`](src/app.ts). Worked examples live under [`Scenarios/`](Scenarios/):
+
+| Scenario | Description |
+| -------- | ----------- |
+| [Scenario-01](Scenarios/Scenario-01/README.md) | Minimal MQTT → IS-12 string mapping |
+| [Scenario-02](Scenarios/Scenario-02/README.md) | MQTT numeric → `NcReceiverMonitor` `linkStatus` |
+| [Scenario-03](Scenarios/Scenario-03/README.md) | Dual monitors, per-domain-status MQTT, derived `overallStatus` |
+
+Each scenario includes its own `bridge.yaml`, model, mappings, and runbook.
 
 ## Testing
 
 The project uses [Vitest](https://vitest.dev/) with v8 coverage.
 
 ```bash
-# Run the full test suite once
-npm test
-
-# Re-run tests on change
-npm run test:watch
-
-# Run tests with coverage (engine target ≥90%, adapters ≥80%)
-npm run coverage
+npm test              # run once
+npm run test:watch    # re-run on change
+npm run coverage      # tests + coverage thresholds
 ```
 
 ## Quality gates
@@ -126,8 +122,8 @@ src/
   config/            # YAML/JSON config loading + schema validation
   observability/     # Structured logging, metrics, health
   app.ts             # Bootstrap entry point
+Scenarios/           # Worked bridge examples (model, mappings, bridge.yaml, README)
 test/                # Unit + integration tests (mirrors src/ layout)
-docs/                # Architecture.md, TaskList.md
 ```
 
 ## Technology stack
