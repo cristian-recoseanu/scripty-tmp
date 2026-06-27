@@ -7,11 +7,12 @@
  */
 
 import { createServer } from 'node:http';
-import type { Server as HttpServer, IncomingMessage, ServerResponse } from 'node:http';
+
 
 import type { Adapter, HealthStatus } from '../adapters/Adapter.js';
 import type { Operation, OpType } from '../engine/bus/operations.js';
 import type { UceBus, Subscription } from '../engine/bus/UceBus.js';
+import type { Server as HttpServer, IncomingMessage, ServerResponse } from 'node:http';
 
 // ---------------------------------------------------------------------------
 // MetricsCollector — counters per op type
@@ -60,13 +61,13 @@ export class MetricsCollector {
 
   get counts(): OpCounts {
     return {
-      propertyChanged: this._counts['propertyChanged'],
-      setProperty: this._counts['setProperty'],
-      methodInvoke: this._counts['methodInvoke'],
-      methodResult: this._counts['methodResult'],
-      childAdded: this._counts['childAdded'],
-      childRemoved: this._counts['childRemoved'],
-      subscription: this._counts['subscription'],
+      propertyChanged: this._counts.propertyChanged,
+      setProperty: this._counts.setProperty,
+      methodInvoke: this._counts.methodInvoke,
+      methodResult: this._counts.methodResult,
+      childAdded: this._counts.childAdded,
+      childRemoved: this._counts.childRemoved,
+      subscription: this._counts.subscription,
       errors: this._errors,
     };
   }
@@ -104,7 +105,7 @@ export interface HealthSnapshot {
 }
 
 export class HealthAggregator {
-  private readonly _adapters: Map<string, Adapter> = new Map();
+  private readonly _adapters = new Map<string, Adapter>();
   private _server: HttpServer | undefined;
 
   /** Register an adapter whose health() will be polled. */
@@ -143,7 +144,7 @@ export class HealthAggregator {
    * Start a minimal HTTP server serving GET /healthz as JSON.
    * Returns the bound port (useful in tests when port=0).
    */
-  startHttpServer(port: number = 0): Promise<number> {
+  startHttpServer(port = 0): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       const server = createServer(
         (req: IncomingMessage, res: ServerResponse) => {

@@ -25,7 +25,6 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 import { Is12EgressAdapter } from '../../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import {
   OID_ROOT,
@@ -36,11 +35,13 @@ import {
   NC_RECEIVER_MONITOR_METHOD,
 } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 import { NcMethodStatus } from '../../../src/adapters/nmos-is12/ms05/types.js';
-import type { NcBlockMemberDescriptor } from '../../../src/adapters/nmos-is12/ms05/types.js';
 import { loadEntities, loadDatatypes, loadTree } from '../../../src/config/modelLoader.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
 import { UceEngine } from '../../../src/engine/UceEngine.js';
 import { Is12Client } from '../../helpers/Is12Client.js';
+
+import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
+import type { NcBlockMemberDescriptor } from '../../../src/adapters/nmos-is12/ms05/types.js';
 
 // ---------------------------------------------------------------------------
 // Paths

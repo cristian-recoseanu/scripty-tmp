@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
 
-import type { PropertyDescriptor } from '../../../src/engine/model/ObjectNode.js';
 import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
 import { marshal, unmarshal } from '../../../src/engine/serialization/codec.js';
-import type { SlotDescriptor } from '../../../src/engine/serialization/codec.js';
 import { snapshot, restore } from '../../../src/engine/serialization/snapshot.js';
+
+import type { PropertyDescriptor } from '../../../src/engine/model/ObjectNode.js';
+import type { SlotDescriptor } from '../../../src/engine/serialization/codec.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -114,7 +115,7 @@ describe('E4.T2 — marshal', () => {
     const r = marshal({ outer: { z: 1, a: 2 } });
     expect(r.ok).toBe(true);
     if (r.ok) {
-      const inner = (r.value as Record<string, unknown>)['outer'];
+      const inner = (r.value as Record<string, unknown>).outer;
       expect(Object.keys(inner as object)).toEqual(['a', 'z']);
     }
   });
@@ -359,7 +360,7 @@ describe('E4.T2 — unmarshal: nested object edge cases', () => {
   it('accepts null inside a nested object field', () => {
     const r = unmarshal({ key: null }, slot);
     expect(r.ok).toBe(true);
-    if (r.ok) expect((r.value as Record<string, unknown>)['key']).toBeNull();
+    if (r.ok) expect((r.value as Record<string, unknown>).key).toBeNull();
   });
 
   it('accepts undefined inside a nested object field (treated as null)', () => {
@@ -370,7 +371,7 @@ describe('E4.T2 — unmarshal: nested object edge cases', () => {
   it('accepts nested array inside an object field', () => {
     const r = unmarshal({ items: [1, 2, 3] }, slot);
     expect(r.ok).toBe(true);
-    if (r.ok) expect((r.value as Record<string, unknown>)['items']).toEqual([1, 2, 3]);
+    if (r.ok) expect((r.value as Record<string, unknown>).items).toEqual([1, 2, 3]);
   });
 
   it('rejects Infinity inside a nested array element', () => {

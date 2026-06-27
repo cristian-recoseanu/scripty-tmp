@@ -55,8 +55,8 @@ export function isSenderMonitorClassId(classId: readonly number[]): boolean {
  * BCP-008-01 §Receiver overall status — mirrors BCP0080101Test.check_overall_status.
  */
 export function computeReceiverOverallStatus(values: MonitorDomainValues): number {
-  const connection = asStatusNumber(values['connectionStatus']);
-  const stream = asStatusNumber(values['streamStatus']);
+  const connection = asStatusNumber(values.connectionStatus);
+  const stream = asStatusNumber(values.streamStatus);
 
   if (connection === 0 || stream === 0) {
     return NcOverallStatus.Inactive;
@@ -70,8 +70,8 @@ export function computeReceiverOverallStatus(values: MonitorDomainValues): numbe
  * BCP-008-02 §Sender overall status — mirrors BCP0080201Test.check_overall_status.
  */
 export function computeSenderOverallStatus(values: MonitorDomainValues): number {
-  const transmission = asStatusNumber(values['transmissionStatus']);
-  const essence = asStatusNumber(values['essenceStatus']);
+  const transmission = asStatusNumber(values.transmissionStatus);
+  const essence = asStatusNumber(values.essenceStatus);
 
   if (transmission === 0 || essence === 0) {
     return NcOverallStatus.Inactive;

@@ -1,15 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 
-import type {
-  ChildAddedOp,
-  ChildRemovedOp,
-  MethodInvokeOp,
-  MethodResultOp,
-  Operation,
-  PropertyChangedOp,
-  SetPropertyOp,
-  SubscriptionOp,
-} from '../../../src/engine/bus/operations.js';
 import {
   makeChildAddedOp,
   makeChildRemovedOp,
@@ -20,6 +10,17 @@ import {
   makeSubscriptionOp,
 } from '../../../src/engine/bus/operations.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
+
+import type {
+  ChildAddedOp,
+  ChildRemovedOp,
+  MethodInvokeOp,
+  MethodResultOp,
+  Operation,
+  PropertyChangedOp,
+  SetPropertyOp,
+  SubscriptionOp,
+} from '../../../src/engine/bus/operations.js';
 
 // ---------------------------------------------------------------------------
 // Fixture helpers
@@ -339,7 +340,7 @@ describe('E5.T3 — faulty-handler isolation', () => {
   });
 
   it('logs the error with correlationId and origin', () => {
-    const logArgs: Array<[string, unknown]> = [];
+    const logArgs: [string, unknown][] = [];
     const bus = new UceBus({ error: (msg, err) => logArgs.push([msg, err]) });
     bus.subscribe({}, () => { throw new Error('kaboom'); });
     bus.publish(propChanged());

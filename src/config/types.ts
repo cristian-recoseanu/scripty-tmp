@@ -130,12 +130,12 @@ export const TreePropertyValueSchema = z
   })
   .strict();
 
-export type ParsedTreeNode = {
+export interface ParsedTreeNode {
   location: string;
   entity_def: string;
   properties: z.infer<typeof TreePropertyValueSchema>[];
   children: ParsedTreeNode[];
-};
+}
 
 export const TreeNodeSchema: z.ZodType<ParsedTreeNode> = z.lazy(() =>
   z

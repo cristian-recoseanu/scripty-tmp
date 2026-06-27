@@ -17,6 +17,7 @@
 import WebSocket from 'ws';
 
 import { IS12MessageType } from '../../src/adapters/nmos-is12/ms05/types.js';
+
 import type {
   IS12CommandMessage,
   IS12CommandResponseMessage,

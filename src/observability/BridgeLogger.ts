@@ -9,9 +9,10 @@
  */
 
 import pino from 'pino';
-import type { Logger as PinoLogger } from 'pino';
 
 import type { AdapterLogger } from '../adapters/Adapter.js';
+import type { Logger as PinoLogger } from 'pino';
+
 
 // ---------------------------------------------------------------------------
 // Level type

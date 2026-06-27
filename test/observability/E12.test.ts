@@ -9,16 +9,17 @@ import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import type pino from 'pino';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-import type { HealthStatus , Adapter } from '../../src/adapters/Adapter.js';
 import { makePropertyChangedOp, makeSetPropertyOp, makeMethodInvokeOp } from '../../src/engine/bus/operations.js';
 import { UceBus } from '../../src/engine/bus/UceBus.js';
 import { AuditLogger } from '../../src/observability/AuditLogger.js';
 import { BridgeLogger } from '../../src/observability/BridgeLogger.js';
 import { MetricsCollector, HealthAggregator } from '../../src/observability/MetricsCollector.js';
 import { Recorder, Replayer } from '../../src/observability/RecordReplay.js';
+
+import type { HealthStatus , Adapter } from '../../src/adapters/Adapter.js';
+import type pino from 'pino';
 
 // ---------------------------------------------------------------------------
 // Helpers

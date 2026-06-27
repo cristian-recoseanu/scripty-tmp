@@ -5,9 +5,9 @@
  * The pipeline applies transforms in order; any error short-circuits.
  */
 
+import type { TransformDescriptor } from './types.js';
 import type { ModelValue } from '../engine/model/ObjectNode.js';
 
-import type { TransformDescriptor } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Result types

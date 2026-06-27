@@ -90,7 +90,7 @@ describe('E17.T1 — Is12AdapterConfigSchema with is04 block', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const flat = result.error.flatten();
-      expect(flat.fieldErrors['is04']?.join(' ') ?? '').toMatch(/httpPort/i);
+      expect(flat.fieldErrors.is04?.join(' ') ?? '').toMatch(/httpPort/i);
     }
   });
 
@@ -316,7 +316,7 @@ describe('E17.T4 — NodeApiServer', () => {
   it('GET /x-nmos/node/v1.3/devices/ returns array with one device', async () => {
     const res = await httpGet(port, '/x-nmos/node/v1.3/devices/');
     expect(res.status).toBe(200);
-    const list = JSON.parse(res.body) as Array<{ id: string }>;
+    const list = JSON.parse(res.body) as { id: string }[];
     expect(list).toHaveLength(1);
     expect(list[0]?.id).toBe(deviceId);
   });
@@ -631,7 +631,7 @@ describe('E17.T6 — Adapter lifecycle with IS-04 Node API', () => {
     await adapter.start();
 
     const res = await httpGet(sharedPort, `/x-nmos/node/v1.3/devices/`);
-    const devices = JSON.parse(res.body) as Array<{ controls: Array<{ type: string; href: string }> }>;
+    const devices = JSON.parse(res.body) as { controls: { type: string; href: string }[] }[];
     const ctrl = devices[0]?.controls.find((c) => c.type === NCP_CONTROL_TYPE);
     expect(ctrl).toBeDefined();
     expect(ctrl?.href).toContain(String(sharedPort));

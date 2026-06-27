@@ -23,7 +23,6 @@ import { Is12EgressAdapter } from '../src/adapters/nmos-is12/Is12EgressAdapter.j
 import { OID_ROOT } from '../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
 import { NC_OBJECT_METHOD } from '../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 import { IS12MessageType, NcMethodStatus } from '../src/adapters/nmos-is12/ms05/types.js';
-import type { IS12NotificationMessage } from '../src/adapters/nmos-is12/ms05/types.js';
 import { makePropertyChangedOp } from '../src/engine/bus/operations.js';
 import { UceBus } from '../src/engine/bus/UceBus.js';
 import { UceEngine } from '../src/engine/UceEngine.js';
@@ -37,6 +36,8 @@ import {
   expect,
 } from './helpers/builders.js';
 import { Is12Client } from './helpers/Is12Client.js';
+
+import type { IS12NotificationMessage } from '../src/adapters/nmos-is12/ms05/types.js';
 
 // ---------------------------------------------------------------------------
 // Port counter (adapters/WS server)

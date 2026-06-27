@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
+import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
+
 import type {
   InstanceIdentity,
   PropertyDescriptor,
@@ -7,7 +9,6 @@ import type {
   MethodResult,
   ArgumentBag,
 } from '../../../src/engine/model/ObjectNode.js';
-import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -65,7 +66,7 @@ const voidMethod: MethodDescriptor = {
 
 function makeNode(overrides: Partial<InstanceIdentity> = {}): InstanceNodeImpl {
   const handlers = new Map<string, (args: ArgumentBag) => Promise<MethodResult>>();
-  handlers.set('echo', (args): Promise<MethodResult> => Promise.resolve({ status: 200, value: args['msg'] ?? null }));
+  handlers.set('echo', (args): Promise<MethodResult> => Promise.resolve({ status: 200, value: args.msg ?? null }));
   handlers.set('reset', (): Promise<MethodResult> => Promise.resolve({ status: 200 }));
   return new InstanceNodeImpl(
     makeIdentity(overrides),

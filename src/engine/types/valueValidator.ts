@@ -6,9 +6,10 @@
  */
 
 import { validateConstraints } from './constraints.js';
+import { validateBaseTypeValue } from './primitives.js';
+
 import type { BaseType, FieldDef, ValueConstraints } from './Datatype.js';
 import type { DatatypeRegistry } from './DatatypeRegistry.js';
-import { validateBaseTypeValue } from './primitives.js';
 
 // ---------------------------------------------------------------------------
 // Result types

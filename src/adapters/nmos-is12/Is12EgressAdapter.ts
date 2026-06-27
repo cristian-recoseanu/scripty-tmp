@@ -21,21 +21,17 @@ import { readFileSync } from 'node:fs';
 import http from 'node:http';
 
 import { WebSocketServer } from 'ws';
-import type { WebSocket } from 'ws';
 
-import type { PropertyChangedOp } from '../../engine/bus/operations.js';
+
 import { EgressMapper } from '../../mapping/EgressMapper.js';
 import { EgressMappingSchema } from '../../mapping/types.js';
-import type { Adapter, AdapterContext, AdapterFactory, HealthStatus, JSONSchema } from '../Adapter.js';
+
 
 import { Is12AdapterConfigSchema, IS12_CONFIG_JSON_SCHEMA } from './config.js';
-import type { Is12AdapterConfig, Is04Config } from './config.js';
 import { NodeApiServer } from './is04/NodeApiServer.js';
 import { RegistrationClient } from './is04/RegistrationClient.js';
 import { buildIs04Node, buildIs04Device, buildIs04Sender, buildIs04Receiver, buildNcpControl } from './is04/resources.js';
-import type { Is04Node, Is04Device, Is04Sender, Is04Receiver } from './is04/types.js';
 import { buildCatalogue } from './ms05/catalogue.js';
-import type { Catalogue } from './ms05/catalogue.js';
 import { IdentityRegistry, OID_ROOT, OID_DEVICE_MANAGER, OID_CLASS_MANAGER } from './ms05/IdentityRegistry.js';
 import {
   dispatch,
@@ -59,6 +55,13 @@ import {
   type NcNotificationMessage,
   type NcPropertyChangedEventData,
 } from './ms05/types.js';
+
+import type { Is12AdapterConfig, Is04Config } from './config.js';
+import type { Adapter, AdapterContext, AdapterFactory, HealthStatus, JSONSchema } from '../Adapter.js';
+import type { Is04Node, Is04Device, Is04Sender, Is04Receiver } from './is04/types.js';
+import type { Catalogue } from './ms05/catalogue.js';
+import type { PropertyChangedOp } from '../../engine/bus/operations.js';
+import type { WebSocket } from 'ws';
 
 // ---------------------------------------------------------------------------
 // Per-session state
@@ -143,7 +146,7 @@ export class Is12EgressAdapter implements Adapter {
     }
 
     // Load egress mapping for runtime property projection (E18.T1)
-    const mappingPath = (ctx.config as Record<string, unknown>)['mapping'];
+    const mappingPath = (ctx.config as Record<string, unknown>).mapping;
     if (typeof mappingPath === 'string') {
       try {
         const raw = JSON.parse(readFileSync(mappingPath, 'utf-8')) as unknown;
@@ -305,7 +308,7 @@ export class Is12EgressAdapter implements Adapter {
           if (cls !== undefined) {
             for (const [propName, entry] of cls.properties) {
               const tid = entry.targetId as { level: number; index: number } | undefined;
-              if (tid !== undefined && tid.level === level && tid.index === index) {
+              if (tid?.level === level && tid.index === index) {
                 return propName;
               }
             }
@@ -352,7 +355,7 @@ export class Is12EgressAdapter implements Adapter {
           const cls = egressMapper.getClass(entityName);
           if (cls !== undefined) {
             const entry = cls.properties.get(propertyName);
-            if (entry !== undefined && entry.readOnly !== undefined) return entry.readOnly;
+            if (entry?.readOnly !== undefined) return entry.readOnly;
           }
         }
 
@@ -567,7 +570,7 @@ export class Is12EgressAdapter implements Adapter {
     }
 
     const narrowed = msg as Record<string, unknown>;
-    const messageType = narrowed['messageType'];
+    const messageType = narrowed.messageType;
 
     switch (messageType) {
       case IS12MessageType.Command:

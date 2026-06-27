@@ -10,27 +10,28 @@ import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import { ZodError } from 'zod';
 
-import type { MethodDescriptor, ModelValue, PropertyDescriptor } from '../engine/model/ObjectNode.js';
 import { InstanceNodeImpl } from '../engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../engine/model/ObjectTree.js';
-import type { DatatypeDefinition, FieldDef, ValueConstraints } from '../engine/types/Datatype.js';
 import { DatatypeRegistry, DatatypeRegistryError } from '../engine/types/DatatypeRegistry.js';
-import type { EntityDefinition } from '../engine/types/EntityDefinition.js';
 import { EntityRegistry, EntityRegistryError } from '../engine/types/EntityRegistry.js';
 import { validateModelValue } from '../engine/types/valueValidator.js';
 
 import { ConfigError } from './loader.js';
+import {
+  DatatypesFileSchema,
+  EntitiesFileSchema,
+  TreeNodeSchema,
+} from './types.js';
+
 import type {
   ParsedDatatypesFile,
   ParsedEntitiesFile,
   ParsedEntityDef,
   ParsedTreeNode,
 } from './types.js';
-import {
-  DatatypesFileSchema,
-  EntitiesFileSchema,
-  TreeNodeSchema,
-} from './types.js';
+import type { MethodDescriptor, ModelValue, PropertyDescriptor } from '../engine/model/ObjectNode.js';
+import type { DatatypeDefinition, FieldDef, ValueConstraints } from '../engine/types/Datatype.js';
+import type { EntityDefinition } from '../engine/types/EntityDefinition.js';
 
 // ---------------------------------------------------------------------------
 // Internal helpers — YAML → zod parse
@@ -62,14 +63,14 @@ function zodParse<T>(schema: { parse: (v: unknown) => T }, raw: unknown, label: 
 function _toConstraints(c: Record<string, unknown> | undefined): ValueConstraints | undefined {
   if (c === undefined) return undefined;
   const out: ValueConstraints = {};
-  if (typeof c['min'] === 'number') out.min = c['min'];
-  if (typeof c['max'] === 'number') out.max = c['max'];
-  if (typeof c['step'] === 'number') out.step = c['step'];
-  if (typeof c['minLength'] === 'number') out.minLength = c['minLength'];
-  if (typeof c['maxLength'] === 'number') out.maxLength = c['maxLength'];
-  if (typeof c['pattern'] === 'string') out.pattern = c['pattern'];
-  if (typeof c['minItems'] === 'number') out.minItems = c['minItems'];
-  if (typeof c['maxItems'] === 'number') out.maxItems = c['maxItems'];
+  if (typeof c.min === 'number') out.min = c.min;
+  if (typeof c.max === 'number') out.max = c.max;
+  if (typeof c.step === 'number') out.step = c.step;
+  if (typeof c.minLength === 'number') out.minLength = c.minLength;
+  if (typeof c.maxLength === 'number') out.maxLength = c.maxLength;
+  if (typeof c.pattern === 'string') out.pattern = c.pattern;
+  if (typeof c.minItems === 'number') out.minItems = c.minItems;
+  if (typeof c.maxItems === 'number') out.maxItems = c.maxItems;
   return out;
 }
 

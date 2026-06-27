@@ -9,15 +9,16 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 import { Is12EgressAdapter } from '../../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import { OID_ROOT } from '../../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
 import { NC_BLOCK_METHOD } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
-import type { NcBlockMemberDescriptor } from '../../../src/adapters/nmos-is12/ms05/types.js';
 import { loadEntities, loadDatatypes, loadTree } from '../../../src/config/modelLoader.js';
 import { makePropertyChangedOp } from '../../../src/engine/bus/operations.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
 import { Is12Client } from '../../helpers/Is12Client.js';
+
+import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
+import type { NcBlockMemberDescriptor } from '../../../src/adapters/nmos-is12/ms05/types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SCENARIO_DIR = resolve(__dirname, '../../../Scenarios/Scenario-03');

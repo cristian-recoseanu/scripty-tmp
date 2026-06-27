@@ -22,17 +22,10 @@ import { join } from 'node:path';
 import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest';
 import WebSocket from 'ws';
 
-import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
 import { Is12EgressAdapter } from '../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import { OID_ROOT } from '../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
 import { NC_OBJECT_METHOD } from '../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
 import { IS12MessageType, NcMethodStatus } from '../../src/adapters/nmos-is12/ms05/types.js';
-import type {
-  IS12CommandMessage,
-  IS12CommandResponseMessage,
-  IS12SubscriptionMessage,
-  IS12NotificationMessage,
-} from '../../src/adapters/nmos-is12/ms05/types.js';
 import { makeSetPropertyOp, makePropertyChangedOp } from '../../src/engine/bus/operations.js';
 import { UceBus } from '../../src/engine/bus/UceBus.js';
 import { InstanceNodeImpl } from '../../src/engine/model/ObjectNodeImpl.js';
@@ -41,6 +34,14 @@ import { DatatypeRegistry } from '../../src/engine/types/DatatypeRegistry.js';
 import { EntityRegistry } from '../../src/engine/types/EntityRegistry.js';
 import { UceEngine } from '../../src/engine/UceEngine.js';
 import { IngressMapper, extractCapturesFromLocation, renderReverse } from '../../src/mapping/IngressMapper.js';
+
+import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
+import type {
+  IS12CommandMessage,
+  IS12CommandResponseMessage,
+  IS12SubscriptionMessage,
+  IS12NotificationMessage,
+} from '../../src/adapters/nmos-is12/ms05/types.js';
 import type { IngressMapping } from '../../src/mapping/types.js';
 
 // ---------------------------------------------------------------------------
@@ -48,7 +49,7 @@ import type { IngressMapping } from '../../src/mapping/types.js';
 // ---------------------------------------------------------------------------
 
 vi.mock('mqtt', () => {
-  const published: Array<{ topic: string; payload: string }> = [];
+  const published: { topic: string; payload: string }[] = [];
   const handlers: Record<string, ((...args: unknown[]) => void)[]> = {};
 
   const fakeClient = {
@@ -212,7 +213,7 @@ describe('E13.T1 — IS-12 Set → engine SetPropertyOp with origin', () => {
   });
 
   it('Set command publishes SetPropertyOp with correct origin and correlationId', async () => {
-    const published: Array<{ op: string; origin: string; correlationId: string }> = [];
+    const published: { op: string; origin: string; correlationId: string }[] = [];
     bus.subscribe({ op: 'setProperty' }, (op) => {
       const typed = op as { op: string; origin: string; correlationId: string };
       published.push(typed);
@@ -320,7 +321,7 @@ describe('E13.T2 — Write-back routing: IS-12 Set → MQTT publish', () => {
     const { tree } = makeTree();
     const engine = new UceEngine({ tree, bus });
 
-    const received: Array<{ origin: string; value: unknown }> = [];
+    const received: { origin: string; value: unknown }[] = [];
     engine.observe('mqtt-ingress', 'root', 'temperature', (op) => {
       received.push({ origin: op.origin, value: op.value });
     });
@@ -712,7 +713,7 @@ describe('E13.T6 — Round-trip convergence', () => {
    * registered observers reach the same final value.
    */
   async function assertConvergence(opts: {
-    writeOps: Array<{ origin: string; value: number }>;
+    writeOps: { origin: string; value: number }[];
     expectedFinalValue: number;
   }): Promise<void> {
     const bus = new UceBus();
@@ -720,8 +721,8 @@ describe('E13.T6 — Round-trip convergence', () => {
     const engine = new UceEngine({ tree, bus });
 
     const receivedByObserver: Record<string, number[]> = { obs1: [], obs2: [] };
-    engine.observe('obs1', 'root', 'temperature', (op) => receivedByObserver['obs1']!.push(op.value as number));
-    engine.observe('obs2', 'root', 'temperature', (op) => receivedByObserver['obs2']!.push(op.value as number));
+    engine.observe('obs1', 'root', 'temperature', (op) => receivedByObserver.obs1!.push(op.value as number));
+    engine.observe('obs2', 'root', 'temperature', (op) => receivedByObserver.obs2!.push(op.value as number));
     engine.start();
 
     for (const op of opts.writeOps) {
@@ -737,8 +738,8 @@ describe('E13.T6 — Round-trip convergence', () => {
     await new Promise<void>((r) => setTimeout(r, 50));
 
     // All observers see the same final value
-    const tree1 = receivedByObserver['obs1'];
-    const tree2 = receivedByObserver['obs2'];
+    const tree1 = receivedByObserver.obs1;
+    const tree2 = receivedByObserver.obs2;
     if (tree1 !== undefined && tree1.length > 0) {
       expect(tree1[tree1.length - 1]).toBe(opts.expectedFinalValue);
     }
@@ -947,7 +948,7 @@ describe('E13.T3 — MQTT echo suppression (integration with fake client)', asyn
   // Import the MQTT adapter — vi.mock('mqtt') is already in effect
   const { MqttIngressAdapter } = await import('../../src/adapters/mqtt/MqttIngressAdapter.js');
   const { __fakeClient } = await import('mqtt') as unknown as { __fakeClient: {
-    published: Array<{ topic: string; payload: string }>;
+    published: { topic: string; payload: string }[];
     publishAsync: Mock;
     _emit: (event: string, ...args: unknown[]) => void;
     on: (event: string, cb: (...args: unknown[]) => void) => void;
@@ -1005,7 +1006,7 @@ describe('E13.T3 — MQTT echo suppression (integration with fake client)', asyn
     // Allow publish to complete
     await new Promise<void>((r) => setTimeout(r, 20));
 
-    const pubs = __fakeClient.publishAsync.mock.calls as Array<[string, string]>;
+    const pubs = __fakeClient.publishAsync.mock.calls as [string, string][];
     const matchingPub = pubs.find(([topic]) => topic === 'sensors/temperature');
     expect(matchingPub).toBeDefined();
     expect(matchingPub?.[1]).toBe('42');

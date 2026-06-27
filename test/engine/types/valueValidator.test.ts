@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
-import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
 import { validateModelValue } from '../../../src/engine/types/valueValidator.js';
+
+import type { DatatypeDefinition } from '../../../src/engine/types/Datatype.js';
 
 // ---------------------------------------------------------------------------
 // Fixtures

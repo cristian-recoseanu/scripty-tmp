@@ -18,18 +18,19 @@ import { join } from 'node:path';
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
-import type { AdapterContext, AdapterLogger } from '../../../src/adapters/index.js';
 import {
   MqttIngressAdapter,
   MqttAdapterConfigSchema,
   MQTT_CONFIG_JSON_SCHEMA,
 } from '../../../src/adapters/mqtt/index.js';
-import type { Operation } from '../../../src/engine/bus/operations.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
 import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
 import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
+
+import type { AdapterContext, AdapterLogger } from '../../../src/adapters/index.js';
+import type { Operation } from '../../../src/engine/bus/operations.js';
 
 // ---------------------------------------------------------------------------
 // Fake MqttClient — returned by the mocked connectAsync
@@ -215,7 +216,7 @@ describe('E10.T7 — MqttAdapterConfigSchema', () => {
   });
 
   it('MQTT_CONFIG_JSON_SCHEMA lists url in required', () => {
-    expect((MQTT_CONFIG_JSON_SCHEMA['required'] as string[])).toContain('url');
+    expect((MQTT_CONFIG_JSON_SCHEMA.required as string[])).toContain('url');
   });
 
   it('configSchema() returns an object schema', () => {

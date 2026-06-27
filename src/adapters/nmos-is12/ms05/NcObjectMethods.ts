@@ -18,12 +18,7 @@
  */
 
 import { makePropertyChangedOp, makeSetPropertyOp } from '../../../engine/bus/operations.js';
-import type { UceBus } from '../../../engine/bus/UceBus.js';
-import type { ModelValue } from '../../../engine/model/ObjectNode.js';
-import type { InstanceTree } from '../../../engine/model/ObjectTree.js';
 
-import type { Catalogue } from './catalogue.js';
-import type { IdentityRegistry } from './IdentityRegistry.js';
 import { OID_ROOT, OID_DEVICE_MANAGER, OID_CLASS_MANAGER } from './IdentityRegistry.js';
 import {
   computeOverallStatusForClassId,
@@ -40,6 +35,14 @@ import {
   type NcClassDescriptor,
   type NcBlockMemberDescriptor,
 } from './types.js';
+
+import type { Catalogue } from './catalogue.js';
+import type { IdentityRegistry } from './IdentityRegistry.js';
+import type { UceBus } from '../../../engine/bus/UceBus.js';
+import type { ModelValue } from '../../../engine/model/ObjectNode.js';
+import type { InstanceTree } from '../../../engine/model/ObjectTree.js';
+
+
 
 // ---------------------------------------------------------------------------
 // Method IDs (MS-05 level 1 = NcObject)
@@ -514,14 +517,14 @@ function dispatchNcBlock(ctx: DispatchContext, propMap: PropertyIdMap): Dispatch
 
   switch (methodId.index) {
     case NC_BLOCK_METHOD.GetMemberDescriptors.index: {
-      const recurse = (args['recurse'] as boolean | undefined) ?? false;
+      const recurse = (args.recurse as boolean | undefined) ?? false;
       if (!recurse) {
         return ok(buildMemberDescriptors(ctx, ownerOid));
       }
       return ok(buildMemberDescriptorsRecursive(ctx, ownerOid));
     }
     case NC_BLOCK_METHOD.FindMembersByPath.index: {
-      const pathArr = args['path'] as string[] | undefined;
+      const pathArr = args.path as string[] | undefined;
       if (pathArr === undefined || pathArr.length === 0) {
         return err(NcMethodStatus.BadCommandFormat, 'Missing path argument');
       }
@@ -545,10 +548,10 @@ function dispatchNcBlock(ctx: DispatchContext, propMap: PropertyIdMap): Dispatch
       return ok(found);
     }
     case NC_BLOCK_METHOD.FindMembersByRole.index: {
-      const role = args['role'] as string | undefined;
-      const caseSensitive = (args['caseSensitive'] as boolean | undefined) ?? true;
-      const matchWholeString = (args['matchWholeString'] as boolean | undefined) ?? true;
-      const recurse = (args['recurse'] as boolean | undefined) ?? false;
+      const role = args.role as string | undefined;
+      const caseSensitive = (args.caseSensitive as boolean | undefined) ?? true;
+      const matchWholeString = (args.matchWholeString as boolean | undefined) ?? true;
+      const recurse = (args.recurse as boolean | undefined) ?? false;
       if (role === undefined) {
         return err(NcMethodStatus.BadCommandFormat, 'Missing role argument');
       }
@@ -563,9 +566,9 @@ function dispatchNcBlock(ctx: DispatchContext, propMap: PropertyIdMap): Dispatch
       return ok(filtered);
     }
     case NC_BLOCK_METHOD.FindMembersByClassId.index: {
-      const classId = args['classId'] as readonly number[] | undefined;
-      const includeDerived = (args['includeDerived'] as boolean | undefined) ?? false;
-      const recurse = (args['recurse'] as boolean | undefined) ?? false;
+      const classId = args.classId as readonly number[] | undefined;
+      const includeDerived = (args.includeDerived as boolean | undefined) ?? false;
+      const recurse = (args.recurse as boolean | undefined) ?? false;
       if (classId === undefined) {
         return err(NcMethodStatus.BadCommandFormat, 'Missing classId argument');
       }
@@ -617,7 +620,7 @@ function dispatchDeviceManager(ctx: DispatchContext): DispatchResult {
     return err(NcMethodStatus.MethodNotImplemented, 'NcDeviceManager method not implemented');
   }
   if (methodId.index === NC_OBJECT_METHOD.Get.index) {
-    const propId = ctx.args['id'] as { level: number; index: number } | undefined;
+    const propId = ctx.args.id as { level: number; index: number } | undefined;
     if (propId === undefined) return err(NcMethodStatus.BadCommandFormat, 'Missing property id');
     // Level-1: standard NcObject properties
     const std = resolveStandardProperty({ ...ctx, oid: OID_DEVICE_MANAGER }, propId);
@@ -643,17 +646,17 @@ function dispatchDeviceManager(ctx: DispatchContext): DispatchResult {
       `NcDeviceManager property {level:${propId.level},index:${propId.index}} not implemented`);
   }
   if (methodId.index === NC_OBJECT_METHOD.Set.index) {
-    const propId = ctx.args['id'] as { level: number; index: number } | undefined;
+    const propId = ctx.args.id as { level: number; index: number } | undefined;
     if (propId === undefined) return err(NcMethodStatus.BadCommandFormat, 'Missing property id');
-    const val = ctx.args['value'];
+    const val = ctx.args.value;
     const std = setStandardProperty({ ...ctx, oid: OID_DEVICE_MANAGER }, propId, val);
     if (std !== undefined) return std;
     return err(NcMethodStatus.Readonly, 'NcDeviceManager properties are read-only');
   }
   if (methodId.index === NC_OBJECT_METHOD.GetSequenceItem.index) {
-    const propId = ctx.args['id'] as { level: number; index: number } | undefined;
+    const propId = ctx.args.id as { level: number; index: number } | undefined;
     if (propId === undefined) return err(NcMethodStatus.BadCommandFormat, 'Missing property id');
-    const idx = ctx.args['index'] as number | undefined;
+    const idx = ctx.args.index as number | undefined;
     if (idx === undefined) return err(NcMethodStatus.BadCommandFormat, 'Missing index argument');
     const seq = resolveStandardSequence({ ...ctx, oid: OID_DEVICE_MANAGER }, propId);
     if (seq === null) return err(NcMethodStatus.PropertyNotImplemented, 'Not a sequence property');
@@ -661,7 +664,7 @@ function dispatchDeviceManager(ctx: DispatchContext): DispatchResult {
     return ok(seq[idx]);
   }
   if (methodId.index === NC_OBJECT_METHOD.GetSequenceLength.index) {
-    const propId = ctx.args['id'] as { level: number; index: number } | undefined;
+    const propId = ctx.args.id as { level: number; index: number } | undefined;
     if (propId === undefined) return err(NcMethodStatus.BadCommandFormat, 'Missing property id');
     const seq = resolveStandardSequence({ ...ctx, oid: OID_DEVICE_MANAGER }, propId);
     if (seq === null) return err(NcMethodStatus.PropertyNotImplemented, 'Not a sequence property');
@@ -716,7 +719,7 @@ function dispatchClassManager(ctx: DispatchContext): DispatchResult {
 
   // NcObject level-1 methods on class manager — standard NcObject props + level-3 CM properties
   if (methodId.level === 1) {
-    const propId = ctx.args['id'] as { level: number; index: number } | undefined;
+    const propId = ctx.args.id as { level: number; index: number } | undefined;
     switch (methodId.index) {
       case NC_OBJECT_METHOD.Get.index: {
         if (propId === undefined) return err(NcMethodStatus.BadCommandFormat, 'Missing property id');
@@ -738,14 +741,14 @@ function dispatchClassManager(ctx: DispatchContext): DispatchResult {
       }
       case NC_OBJECT_METHOD.Set.index: {
         if (propId === undefined) return err(NcMethodStatus.BadCommandFormat, 'Missing property id');
-        const val = ctx.args['value'];
+        const val = ctx.args.value;
         const std = setStandardProperty({ ...ctx, oid: OID_CLASS_MANAGER }, propId, val);
         if (std !== undefined) return std;
         return err(NcMethodStatus.Readonly, 'NcClassManager properties are read-only');
       }
       case NC_OBJECT_METHOD.GetSequenceItem.index: {
         if (propId === undefined) return err(NcMethodStatus.BadCommandFormat, 'Missing property id');
-        const idx = ctx.args['index'] as number | undefined;
+        const idx = ctx.args.index as number | undefined;
         if (idx === undefined) return err(NcMethodStatus.BadCommandFormat, 'Missing index argument');
         const seq = resolveClassManagerSequence(catalogue, propId);
         if (seq === null) return err(NcMethodStatus.PropertyNotImplemented, `Not a sequence property`);
@@ -769,11 +772,11 @@ function dispatchClassManager(ctx: DispatchContext): DispatchResult {
 
   switch (methodId.index) {
     case NC_CLASS_MANAGER_METHOD.GetControlClass.index: {
-      const classId = ctx.args['classId'] as readonly number[] | undefined;
+      const classId = ctx.args.classId as readonly number[] | undefined;
       if (classId === undefined) {
         return err(NcMethodStatus.BadCommandFormat, 'Missing classId argument');
       }
-      const includeInherited = ctx.args['includeInherited'] as boolean | undefined;
+      const includeInherited = ctx.args.includeInherited as boolean | undefined;
       let found: NcClassDescriptor | undefined;
       for (const desc of catalogue.classes.values()) {
         if (JSON.stringify(desc.classId) === JSON.stringify(classId)) {
@@ -790,11 +793,11 @@ function dispatchClassManager(ctx: DispatchContext): DispatchResult {
       return ok(found);
     }
     case NC_CLASS_MANAGER_METHOD.GetDatatype.index: {
-      const name = ctx.args['name'] as string | undefined;
+      const name = ctx.args.name as string | undefined;
       if (name === undefined) {
         return err(NcMethodStatus.BadCommandFormat, 'Missing name argument');
       }
-      const includeInherited = ctx.args['includeInherited'] as boolean | undefined;
+      const includeInherited = ctx.args.includeInherited as boolean | undefined;
       const desc: NcDatatypeDescriptor | undefined = catalogue.datatypes.get(name);
       if (desc === undefined) {
         return err(NcMethodStatus.BadOid, `No datatype '${name}'`);
@@ -854,16 +857,16 @@ function flattenDatatypeDescriptor(
   catalogue: DispatchContext['catalogue'],
 ): Record<string, unknown> {
   // Only Structs (type=2) have fields to flatten; Typedefs and Primitives do not
-  if (wired['type'] !== 2) return wired;
-  const parentTypeName = wired['parentType'] as string | null | undefined;
+  if (wired.type !== 2) return wired;
+  const parentTypeName = wired.parentType as string | null | undefined;
   if (!parentTypeName) return wired;
   const parentDesc = catalogue.datatypes.get(parentTypeName);
   if (parentDesc === undefined) return wired;
   const parentWired = flattenDatatypeDescriptor(wireDatatype(parentDesc) as Record<string, unknown>, catalogue);
   // Only merge if parent is also a Struct
-  if (parentWired['type'] !== 2) return wired;
-  const myFields = (wired['fields'] as unknown[] | undefined) ?? [];
-  const parentFields = (parentWired['fields'] as unknown[] | undefined) ?? [];
+  if (parentWired.type !== 2) return wired;
+  const myFields = (wired.fields as unknown[] | undefined) ?? [];
+  const parentFields = (parentWired.fields as unknown[] | undefined) ?? [];
   return { ...wired, fields: [...parentFields, ...myFields] };
 }
 
@@ -967,7 +970,7 @@ export function readDerivedOverallStatus(
 }
 
 function ncGet(ctx: DispatchContext, propMap: PropertyIdMap): DispatchResult {
-  const propId = ctx.args['id'] as { level: number; index: number } | undefined;
+  const propId = ctx.args.id as { level: number; index: number } | undefined;
   if (propId === undefined) {
     return err(NcMethodStatus.BadCommandFormat, 'Missing property id argument');
   }
@@ -1008,8 +1011,8 @@ function ncGet(ctx: DispatchContext, propMap: PropertyIdMap): DispatchResult {
 // ---------------------------------------------------------------------------
 
 function ncSet(ctx: DispatchContext, propMap: PropertyIdMap): DispatchResult {
-  const propId = ctx.args['id'] as { level: number; index: number } | undefined;
-  const value = ctx.args['value'] as ModelValue;
+  const propId = ctx.args.id as { level: number; index: number } | undefined;
+  const value = ctx.args.value as ModelValue;
   if (propId === undefined) {
     return err(NcMethodStatus.BadCommandFormat, 'Missing property id argument');
   }
@@ -1074,8 +1077,8 @@ function getArray(ctx: DispatchContext, propMap: PropertyIdMap, propId: { level:
 }
 
 function ncGetSequenceItem(ctx: DispatchContext, propMap: PropertyIdMap): DispatchResult {
-  const propId = ctx.args['id'] as { level: number; index: number } | undefined;
-  const itemIndex = ctx.args['index'] as number | undefined;
+  const propId = ctx.args.id as { level: number; index: number } | undefined;
+  const itemIndex = ctx.args.index as number | undefined;
   if (propId === undefined || itemIndex === undefined) {
     return err(NcMethodStatus.BadCommandFormat, 'Missing id or index argument');
   }
@@ -1097,7 +1100,7 @@ function ncGetSequenceItem(ctx: DispatchContext, propMap: PropertyIdMap): Dispat
 }
 
 function ncGetSequenceLength_impl(ctx: DispatchContext, propMap: PropertyIdMap): DispatchResult {
-  const propId = ctx.args['id'] as { level: number; index: number } | undefined;
+  const propId = ctx.args.id as { level: number; index: number } | undefined;
   if (propId === undefined) {
     return err(NcMethodStatus.BadCommandFormat, 'Missing id argument');
   }
@@ -1109,9 +1112,9 @@ function ncGetSequenceLength_impl(ctx: DispatchContext, propMap: PropertyIdMap):
 }
 
 function ncSetSequenceItem(ctx: DispatchContext, propMap: PropertyIdMap): DispatchResult {
-  const propId = ctx.args['id'] as { level: number; index: number } | undefined;
-  const itemIndex = ctx.args['index'] as number | undefined;
-  const value = ctx.args['value'] as ModelValue;
+  const propId = ctx.args.id as { level: number; index: number } | undefined;
+  const itemIndex = ctx.args.index as number | undefined;
+  const value = ctx.args.value as ModelValue;
   if (propId === undefined || itemIndex === undefined) {
     return err(NcMethodStatus.BadCommandFormat, 'Missing id or index argument');
   }
@@ -1137,8 +1140,8 @@ function ncSetSequenceItem(ctx: DispatchContext, propMap: PropertyIdMap): Dispat
 }
 
 function ncAddSequenceItem(ctx: DispatchContext, propMap: PropertyIdMap): DispatchResult {
-  const propId = ctx.args['id'] as { level: number; index: number } | undefined;
-  const value = ctx.args['value'] as ModelValue;
+  const propId = ctx.args.id as { level: number; index: number } | undefined;
+  const value = ctx.args.value as ModelValue;
   if (propId === undefined) {
     return err(NcMethodStatus.BadCommandFormat, 'Missing id argument');
   }
@@ -1160,8 +1163,8 @@ function ncAddSequenceItem(ctx: DispatchContext, propMap: PropertyIdMap): Dispat
 }
 
 function ncRemoveSequenceItem(ctx: DispatchContext, propMap: PropertyIdMap): DispatchResult {
-  const propId = ctx.args['id'] as { level: number; index: number } | undefined;
-  const itemIndex = ctx.args['index'] as number | undefined;
+  const propId = ctx.args.id as { level: number; index: number } | undefined;
+  const itemIndex = ctx.args.index as number | undefined;
   if (propId === undefined || itemIndex === undefined) {
     return err(NcMethodStatus.BadCommandFormat, 'Missing id or index argument');
   }

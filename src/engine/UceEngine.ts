@@ -12,15 +12,16 @@
  * No protocol-specific identifiers may appear in this file.
  */
 
+import {
+  makeMethodResultOp,
+  makePropertyChangedOp,
+} from './bus/operations.js';
+
 import type {
   ChildRemovedOp,
   MethodInvokeOp,
   PropertyChangedOp,
   SetPropertyOp,
-} from './bus/operations.js';
-import {
-  makeMethodResultOp,
-  makePropertyChangedOp,
 } from './bus/operations.js';
 import type { Subscription, UceBus } from './bus/UceBus.js';
 import type { ModelValue } from './model/ObjectNode.js';
