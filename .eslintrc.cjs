@@ -3,7 +3,7 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: ['./tsconfig.json', './tsconfig.test.json'],
+    project: './tsconfig.test.json',
     tsconfigRootDir: __dirname,
     ecmaVersion: 2022,
     sourceType: 'module',
@@ -18,7 +18,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       typescript: {
-        project: ['./tsconfig.json', './tsconfig.test.json'],
+        project: './tsconfig.test.json',
       },
     },
   },
