@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          HUSKY: 0
+
+      - name: Dependency audit (fail on high+)
+        run: npm run audit:check
+
+      - name: Build with version stamp
+        run: npm run build
+        env:
+          GIT_COMMIT: ${{ github.sha }}
+          GIT_TAG: ${{ github.ref_name }}
+
+      - name: Generate SBOM
+        run: npm run sbom
+
+      - name: Package release tarball
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          tar czf "protocol-bridge-${VERSION}.tar.gz" dist package.json package-lock.json
+          echo "RELEASE_VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+      - name: Generate changelog
+        run: |
+          PREV=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || true)
+          {
+            echo "# ${GITHUB_REF_NAME}"
+            echo
+            if [ -n "$PREV" ]; then
+              git log "${PREV}..HEAD" --pretty=format:'- %s (%h)'
+            else
+              git log --pretty=format:'- %s (%h)'
+            fi
+          } > RELEASE_NOTES.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: RELEASE_NOTES.md
+          files: |
+            protocol-bridge-${{ env.RELEASE_VERSION }}.tar.gz
+            sbom.json
+          generate_release_notes: false
