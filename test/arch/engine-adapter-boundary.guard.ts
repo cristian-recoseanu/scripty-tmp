@@ -15,6 +15,6 @@
 
 // The import below is the deliberate violation; the path does not need to resolve at runtime.
 // depcruise reads it statically.
-import type {} from '../../src/adapters/mqtt/index.js';
+import type {} from '../../src/adapters/mqtt/MqttIngressAdapter.js';
 
 export {};

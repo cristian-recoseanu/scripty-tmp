@@ -18,11 +18,13 @@ import {
   interpolateEnv,
   validateConfigSchema,
   loadBridgeConfig,
+} from '../../src/config/loader.js';
+import {
   loadDatatypes,
   loadEntities,
   loadTree,
   crossValidateMappings,
-} from '../../src/config/index.js';
+} from '../../src/config/modelLoader.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -546,7 +548,7 @@ describe('E7.T4 — crossValidateMappings', () => {
 
 describe('E7 — coverage: resolveFromConfig', () => {
   it('resolves a relative path from the config dir', async () => {
-    const { resolveFromConfig } = await import('../../src/config/index.js');
+    const { resolveFromConfig } = await import('../../src/config/loader.js');
     const result = resolveFromConfig('/etc/bridge/bridge.yaml', './model/tree.yaml');
     expect(result).toBe('/etc/bridge/model/tree.yaml');
   });
@@ -555,7 +557,7 @@ describe('E7 — coverage: resolveFromConfig', () => {
 describe('E7 — coverage: zod parse error path', () => {
   it('throws ConfigError wrapping a ZodError when zod rejects', async () => {
     const { BridgeConfigSchema } = await import('../../src/config/types.js');
-    const { ConfigError: CE } = await import('../../src/config/index.js');
+    const { ConfigError: CE } = await import('../../src/config/loader.js');
     // Directly test that a ZodError is wrapped into ConfigError by loadBridgeConfig:
     // the egress array has zero items — passes if we bypass ajv, fails zod min(1)
     // The simplest trigger: an empty name that passes ajv (no minLength in schema for name... actually we have it)

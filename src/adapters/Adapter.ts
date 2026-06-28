@@ -5,7 +5,7 @@
  * protocol-specific or engine-internal symbols directly.
  */
 
-import type { UceBus } from '../engine/bus/index.js';
+import type { UceBus } from '../engine/bus/UceBus.js';
 import type { InstanceTree } from '../engine/model/ObjectTree.js';
 import type { DatatypeRegistry } from '../engine/types/DatatypeRegistry.js';
 import type { EntityRegistry } from '../engine/types/EntityRegistry.js';

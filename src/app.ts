@@ -11,8 +11,8 @@
 import { dirname, resolve } from 'node:path';
 
 import { AdapterRegistry } from './adapters/AdapterRegistry.js';
-import { MqttAdapterFactory } from './adapters/mqtt/index.js';
-import { Is12AdapterFactory } from './adapters/nmos-is12/index.js';
+import { MqttAdapterFactory } from './adapters/mqtt/MqttIngressAdapter.js';
+import { Is12AdapterFactory } from './adapters/nmos-is12/Is12EgressAdapter.js';
 import { loadBridgeConfig, resolveFromConfig } from './config/loader.js';
 import { loadDatatypes, loadEntities, loadTree } from './config/modelLoader.js';
 import { UceBus } from './engine/bus/UceBus.js';
