@@ -13,6 +13,10 @@ import { describe, it, expect } from 'vitest';
 import { InstanceNodeImpl } from '../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../src/engine/model/ObjectTree.js';
 import { EntityRegistry } from '../../src/engine/types/EntityRegistry.js';
+import { decode } from '../../src/mapping/decoders.js';
+import { EgressMapper } from '../../src/mapping/EgressMapper.js';
+import { IngressMapper, renderReverse } from '../../src/mapping/IngressMapper.js';
+import { applyTransforms } from '../../src/mapping/transforms.js';
 import {
   IngressMappingSchema,
   IngressRuleSchema,
@@ -21,14 +25,10 @@ import {
   parseTopicFilter,
   extractCaptures,
   interpolateLocation,
-  decode,
-  applyTransforms,
-  IngressMapper,
-  EgressMapper,
-  renderReverse,
-} from '../../src/mapping/index.js';
+} from '../../src/mapping/types.js';
 
-import type { IngressMapping, MapperLogger } from '../../src/mapping/index.js';
+import type { MapperLogger } from '../../src/mapping/IngressMapper.js';
+import type { IngressMapping } from '../../src/mapping/types.js';
 
 // ---------------------------------------------------------------------------
 // Helpers

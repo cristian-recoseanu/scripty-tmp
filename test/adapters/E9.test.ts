@@ -8,12 +8,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import {
-  AdapterRegistry,
-  AdapterRegistryError,
-  AdapterOrchestrator,
-  OrchestratorError,
-} from '../../src/adapters/index.js';
+import { AdapterOrchestrator, OrchestratorError } from '../../src/adapters/AdapterOrchestrator.js';
+import { AdapterRegistry, AdapterRegistryError } from '../../src/adapters/AdapterRegistry.js';
 import { UceBus } from '../../src/engine/bus/UceBus.js';
 import { InstanceNodeImpl } from '../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../src/engine/model/ObjectTree.js';
@@ -27,7 +23,7 @@ import type {
   AdapterLogger,
   HealthStatus,
   JSONSchema,
-} from '../../src/adapters/index.js';
+} from '../../src/adapters/Adapter.js';
 
 // ---------------------------------------------------------------------------
 // Helpers

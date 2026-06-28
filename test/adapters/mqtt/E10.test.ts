@@ -18,18 +18,15 @@ import { join } from 'node:path';
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
-import {
-  MqttIngressAdapter,
-  MqttAdapterConfigSchema,
-  MQTT_CONFIG_JSON_SCHEMA,
-} from '../../../src/adapters/mqtt/index.js';
+import { MqttAdapterConfigSchema, MQTT_CONFIG_JSON_SCHEMA } from '../../../src/adapters/mqtt/config.js';
+import { MqttIngressAdapter } from '../../../src/adapters/mqtt/MqttIngressAdapter.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
 import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
 import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
 
-import type { AdapterContext, AdapterLogger } from '../../../src/adapters/index.js';
+import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
 import type { Operation } from '../../../src/engine/bus/operations.js';
 
 // ---------------------------------------------------------------------------
