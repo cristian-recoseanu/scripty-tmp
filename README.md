@@ -60,6 +60,9 @@ npm run build
 # Run the built application (requires a bridge config path)
 npm start -- Scenarios/Scenario-01/bridge.yaml
 
+# Print build version / provenance (requires a prior `npm run build`)
+node dist/app.js --version
+
 # Or run in watch mode during development (no build step needed)
 npm run dev -- Scenarios/Scenario-01/bridge.yaml
 ```
@@ -90,19 +93,30 @@ A single command mirrors the CI pipeline and is the recommended local check befo
 
 ```bash
 npm run validate     # typecheck → lint → arch:check → coverage
+npm run audit:check  # fail on high+ severity npm advisories
+npm run sbom         # CycloneDX SBOM → sbom.json
 ```
 
 Individual gates:
 
 | Command                | Purpose                                                          |
 | ---------------------- | ---------------------------------------------------------------- |
+| `npm run build`        | Compile to `dist/` and write `dist/build-info.json` (version stamp) |
 | `npm run typecheck`    | TypeScript strict type-checking (no emit)                        |
 | `npm run lint`         | ESLint (typescript-eslint, import hygiene, no-floating-promises) |
 | `npm run format:check` | Prettier formatting check (`npm run format` to fix)              |
 | `npm run arch:check`   | Enforces the engine → adapter independence boundary              |
 | `npm run coverage`     | Tests + coverage thresholds                                      |
+| `npm run audit:check`  | Dependency audit — fails on high+ severity CVEs                  |
+| `npm run sbom`         | Generate CycloneDX SBOM for supply-chain visibility              |
 
 A **husky** pre-commit hook runs `lint-staged` to lint and format staged files automatically.
+
+### Releases
+
+Push a semver tag (`v*`) to trigger the release workflow: it builds a stamped artifact, generates an SBOM,
+writes a changelog from commits since the previous tag, and publishes a GitHub Release with the tarball
+and `sbom.json` attached.
 
 ---
 

@@ -5,6 +5,7 @@
  *
  * Usage:
  *   node dist/app.js <path-to-bridge.yaml>
+ *   node dist/app.js --version
  *   BRIDGE_CONFIG=<path> node dist/app.js
  */
 
@@ -13,6 +14,7 @@ import { dirname, resolve } from 'node:path';
 import { AdapterRegistry } from './adapters/AdapterRegistry.js';
 import { MqttAdapterFactory } from './adapters/mqtt/MqttIngressAdapter.js';
 import { Is12AdapterFactory } from './adapters/nmos-is12/Is12EgressAdapter.js';
+import { formatBuildInfo, loadBuildInfo } from './buildInfo.js';
 import { loadBridgeConfig, resolveFromConfig } from './config/loader.js';
 import { loadDatatypes, loadEntities, loadTree } from './config/modelLoader.js';
 import { UceBus } from './engine/bus/UceBus.js';
@@ -152,6 +154,12 @@ async function main(): Promise<void> {
 // ---------------------------------------------------------------------------
 // Entry
 // ---------------------------------------------------------------------------
+
+if (process.argv.includes('--version') || process.argv.includes('-V')) {
+  // eslint-disable-next-line no-console
+  console.log(formatBuildInfo(loadBuildInfo()));
+  process.exit(0);
+}
 
 main().catch((err: unknown) => {
   // eslint-disable-next-line no-console
