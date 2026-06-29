@@ -38,6 +38,7 @@ import { makePropertyChangedOp, makeSetPropertyOp } from '../../src/engine/bus/o
 import { UceBus } from '../../src/engine/bus/UceBus.js';
 import { UceEngine } from '../../src/engine/UceEngine.js';
 import { IngressMappingSchema, EgressMappingSchema } from '../../src/mapping/types.js';
+import { getFreePort } from '../helpers/getFreePort.js';
 import { Is12Client } from '../helpers/Is12Client.js';
 
 import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
@@ -51,13 +52,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SCENARIO_DIR = resolve(__dirname, '../../Scenarios/Scenario-02');
 const MODEL_DIR = resolve(SCENARIO_DIR, 'model');
 const MAPPING_DIR = resolve(SCENARIO_DIR, 'mapping');
-
-// ---------------------------------------------------------------------------
-// Port allocation (range distinct from other test files)
-// ---------------------------------------------------------------------------
-
-let _nextPort = 49800;
-function allocPort(): number { return _nextPort++; }
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -258,7 +252,7 @@ describe('E18.T1+T2+T3+T6+T9 — IS-12 live adapter (nested blocks, linkStatus, 
   let monitorOid: number;
 
   beforeAll(async () => {
-    port = allocPort();
+    port = await getFreePort();
 
     const entities = loadEntities(resolve(MODEL_DIR, 'entities.yaml'));
     const datatypes = loadDatatypes(resolve(MODEL_DIR, 'datatypes.yaml'));
