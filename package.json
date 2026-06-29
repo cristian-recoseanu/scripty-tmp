@@ -4,7 +4,7 @@
   "description": "Protocol-neutral bridge: Ingress (e.g. MQTT) → UCE → Egress (e.g. NMOS IS-12)",
   "type": "module",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "build": "tsc --project tsconfig.build.json && node scripts/write-build-info.mjs",
@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@cyclonedx/cyclonedx-npm": "^5.0.0",
-    "@types/node": "^20.17.0",
+    "@types/node": "^22.0.0",
     "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^8.62.0",
     "@typescript-eslint/parser": "^8.32.0",
