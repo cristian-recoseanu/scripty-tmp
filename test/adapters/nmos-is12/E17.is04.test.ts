@@ -128,8 +128,8 @@ describe('E17.T1 — Is12AdapterConfigSchema with is04 block', () => {
     const result = Is12AdapterConfigSchema.safeParse({
       wsPort: 9001,
       is04: {
-        nodeId: '00000000-0000-0000-0000-000000000001',
-        deviceId: '00000000-0000-0000-0000-000000000002',
+        nodeId: '00000000-0000-4000-8000-000000000001',
+        deviceId: '00000000-0000-4000-8000-000000000002',
         label: 'test bridge',
         description: 'test desc',
         nodeApi: { enabled: true, httpPort: 9002, host: '127.0.0.1' },
@@ -181,7 +181,7 @@ describe('E17.T2/T3 — IS-04 resource builders', () => {
   });
 
   it('buildIs04Node uses provided nodeId', () => {
-    const id = '00000000-0000-0000-0000-000000000042';
+    const id = '00000000-0000-4000-8000-000000000042';
     const node = buildIs04Node({ nodeId: id, httpPort: 9002, httpHost: '127.0.0.1' });
     expect(node.id).toBe(id);
   });
@@ -266,8 +266,8 @@ function httpMethod(
 describe('E17.T4 — NodeApiServer', () => {
   let server: NodeApiServer;
   let port: number;
-  const nodeId = '00000000-0000-0000-0000-000000000001';
-  const deviceId = '00000000-0000-0000-0000-000000000002';
+  const nodeId = '00000000-0000-4000-8000-000000000001';
+  const deviceId = '00000000-0000-4000-8000-000000000002';
 
   beforeEach(async () => {
     const node = buildIs04Node({ nodeId, httpPort: 0, httpHost: '127.0.0.1' });
@@ -343,8 +343,8 @@ describe('E17.T4 — NodeApiServer', () => {
 
   it('GET /x-nmos/node/v1.3/senders/<id> returns sender when configured (E19.T3)', async () => {
     await server.stop();
-    const senderId = '00000000-0000-0000-0000-000000000010';
-    const receiverId = '00000000-0000-0000-0000-000000000011';
+    const senderId = '00000000-0000-4000-8000-000000000010';
+    const receiverId = '00000000-0000-4000-8000-000000000011';
     const node = buildIs04Node({ nodeId, httpPort: 0, httpHost: '127.0.0.1' });
     const device = buildIs04Device({
       deviceId,
@@ -370,7 +370,7 @@ describe('E17.T4 — NodeApiServer', () => {
     expect(receiverRes.status).toBe(200);
     expect((JSON.parse(receiverRes.body) as { id: string }).id).toBe(receiverId);
 
-    const missing = await httpGet(port, '/x-nmos/node/v1.3/senders/00000000-0000-0000-0000-000000000099');
+    const missing = await httpGet(port, '/x-nmos/node/v1.3/senders/00000000-0000-4000-8000-000000000099');
     expect(missing.status).toBe(404);
   });
 
@@ -446,8 +446,8 @@ describe('E17.T5 — RegistrationClient', () => {
   it('registers node + device on start()', async () => {
     const regPort = await getFreePort();
     const mock = await startMockRegistry(regPort);
-    const node = buildIs04Node({ nodeId: '00000000-0000-0000-0000-000000000010', httpPort: 9002, httpHost: '127.0.0.1' });
-    const device = buildIs04Device({ deviceId: '00000000-0000-0000-0000-000000000011', nodeId: node.id, controls: [] });
+    const node = buildIs04Node({ nodeId: '00000000-0000-4000-8000-000000000010', httpPort: 9002, httpHost: '127.0.0.1' });
+    const device = buildIs04Device({ deviceId: '00000000-0000-4000-8000-000000000011', nodeId: node.id, controls: [] });
 
     const client = new RegistrationClient({
       registryHost: '127.0.0.1',
@@ -472,8 +472,8 @@ describe('E17.T5 — RegistrationClient', () => {
   it('sends DELETE for device then node on stop()', async () => {
     const regPort = await getFreePort();
     const mock = await startMockRegistry(regPort);
-    const nodeId = '00000000-0000-0000-0000-000000000020';
-    const deviceId = '00000000-0000-0000-0000-000000000021';
+    const nodeId = '00000000-0000-4000-8000-000000000020';
+    const deviceId = '00000000-0000-4000-8000-000000000021';
     const node = buildIs04Node({ nodeId, httpPort: 9002, httpHost: '127.0.0.1' });
     const device = buildIs04Device({ deviceId, nodeId, controls: [] });
 
@@ -534,8 +534,8 @@ describe('E17.T5 — RegistrationClient', () => {
       s.listen(regPort, '127.0.0.1', () => res(s));
     });
 
-    const node = buildIs04Node({ nodeId: '00000000-0000-0000-0000-000000000030', httpPort: 9002, httpHost: '127.0.0.1' });
-    const device = buildIs04Device({ deviceId: '00000000-0000-0000-0000-000000000031', nodeId: node.id, controls: [] });
+    const node = buildIs04Node({ nodeId: '00000000-0000-4000-8000-000000000030', httpPort: 9002, httpHost: '127.0.0.1' });
+    const device = buildIs04Device({ deviceId: '00000000-0000-4000-8000-000000000031', nodeId: node.id, controls: [] });
 
     const client = new RegistrationClient({
       registryHost: '127.0.0.1',
@@ -664,8 +664,8 @@ describe('E17.T6 — Adapter lifecycle with IS-04 Node API', () => {
     const adapter = new Is12EgressAdapter('e17-test-with-reg');
     const ctx = buildCtx({ extraConfig: {
       is04: {
-        nodeId: '00000000-0000-0000-0000-000000000099',
-        deviceId: '00000000-0000-0000-0000-000000000098',
+        nodeId: '00000000-0000-4000-8000-000000000099',
+        deviceId: '00000000-0000-4000-8000-000000000098',
         nodeApi: { enabled: true, httpPort: sharedPort, host: '127.0.0.1' },
         registration: {
           enabled: true,

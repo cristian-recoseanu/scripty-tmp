@@ -43,8 +43,12 @@ export const Is04RegistrationConfigSchema = z.object({
 export type Is04RegistrationConfig = z.infer<typeof Is04RegistrationConfigSchema>;
 
 export const Is04ConfigSchema = z.object({
-  nodeApi: Is04NodeApiConfigSchema.default({}),
-  registration: Is04RegistrationConfigSchema.default({}),
+  nodeApi: Is04NodeApiConfigSchema.default({ enabled: false, host: '0.0.0.0' }),
+  registration: Is04RegistrationConfigSchema.default({
+    enabled: false,
+    port: 80,
+    heartbeatIntervalSec: 5,
+  }),
   /**
    * Stable UUID for this IS-04 node. Auto-generated and logged on first start
    * if omitted.
@@ -108,7 +112,10 @@ export const Is12AdapterConfigSchema = z.object({
    * IS-04 Node API + Registration configuration (E17).
    * Absent / disabled by default — existing embedded behaviour unchanged.
    */
-  is04: Is04ConfigSchema.default({}),
+  is04: Is04ConfigSchema.default({
+    nodeApi: { enabled: false, host: '0.0.0.0' },
+    registration: { enabled: false, port: 80, heartbeatIntervalSec: 5 },
+  }),
   /**
    * @deprecated Use `is04.label` instead. Kept for back-compat.
    */
