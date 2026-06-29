@@ -36,7 +36,7 @@
   "devDependencies": {
     "@cyclonedx/cyclonedx-npm": "^5.0.0",
     "@eslint/js": "^10.0.1",
-    "@types/node": "^22.0.0",
+    "@types/node": "^26.0.1",
     "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^8.62.0",
     "@typescript-eslint/parser": "^8.32.0",
