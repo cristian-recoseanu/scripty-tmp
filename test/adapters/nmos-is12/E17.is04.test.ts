@@ -11,7 +11,6 @@
  */
 
 import http from 'node:http';
-import net from 'node:net';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -33,22 +32,11 @@ import {
 import { Is12EgressAdapter } from '../../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import { loadBridgeConfig } from '../../../src/config/loader.js';
 import { buildCtx } from '../../helpers/builders.js';
+import { getFreePort } from '../../helpers/getFreePort.js';
 
 // ---------------------------------------------------------------------------
 // Port helpers
 // ---------------------------------------------------------------------------
-
-/** Ask the OS for a free TCP port by briefly binding and releasing it. */
-function getFreePort(): Promise<number> {
-  return new Promise<number>((resolve, reject) => {
-    const s = net.createServer();
-    s.once('error', reject);
-    s.listen(0, '127.0.0.1', () => {
-      const addr = s.address() as net.AddressInfo;
-      s.close(() => resolve(addr.port));
-    });
-  });
-}
 
 // ---------------------------------------------------------------------------
 // Silent logger

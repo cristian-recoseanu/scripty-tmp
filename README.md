@@ -44,7 +44,7 @@ The engine **never** depends on an adapter or any protocol package. This one-way
 
 ## Requirements
 
-- **Node.js 20+ LTS**
+- **Node.js 22+ LTS**
 - **npm** (ships with Node)
 
 ## Getting started
@@ -144,7 +144,7 @@ test/                # Unit + integration tests (mirrors src/ layout)
 
 | Concern                  | Choice                                        |
 | ------------------------ | --------------------------------------------- |
-| Runtime / language       | Node.js 20+ LTS, TypeScript 5.x (strict, ESM) |
+| Runtime / language       | Node.js 22+ LTS, TypeScript 5.x (strict, ESM) |
 | Ingress (Phase 1)        | `mqtt` (MQTT.js)                              |
 | Egress (Phase 1)         | `ws` (WebSocket)                              |
 | Schema validation        | `ajv` (JSON Schema) + `zod` (runtime guards)  |

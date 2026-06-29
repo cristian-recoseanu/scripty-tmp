@@ -15,6 +15,7 @@ import { NC_BLOCK_METHOD } from '../../../src/adapters/nmos-is12/ms05/NcObjectMe
 import { loadEntities, loadDatatypes, loadTree } from '../../../src/config/modelLoader.js';
 import { makePropertyChangedOp } from '../../../src/engine/bus/operations.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
+import { getFreePort } from '../../helpers/getFreePort.js';
 import { Is12Client } from '../../helpers/Is12Client.js';
 
 import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
@@ -24,9 +25,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SCENARIO_DIR = resolve(__dirname, '../../../Scenarios/Scenario-03');
 const MODEL_DIR = resolve(SCENARIO_DIR, 'model');
 const MAPPING_DIR = resolve(SCENARIO_DIR, 'mapping');
-
-let _nextPort = 49500;
-function allocPort(): number { return _nextPort++; }
 
 const noop = () => {};
 const makeLogger = (): AdapterLogger => ({ info: noop, warn: noop, error: noop, debug: noop });
@@ -38,7 +36,7 @@ describe('derived overallStatus notification timing', () => {
   let monitorOid: number;
 
   beforeAll(async () => {
-    const port = allocPort();
+    const port = await getFreePort();
     const entities = loadEntities(resolve(MODEL_DIR, 'entities.yaml'));
     const datatypes = loadDatatypes(resolve(MODEL_DIR, 'datatypes.yaml'));
     const tree = loadTree(resolve(MODEL_DIR, 'tree.yaml'), entities, datatypes);

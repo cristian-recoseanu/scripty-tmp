@@ -23,6 +23,7 @@ import { makeSetPropertyOp } from '../../src/engine/bus/operations.js';
 import { UceBus } from '../../src/engine/bus/UceBus.js';
 import { UceEngine } from '../../src/engine/UceEngine.js';
 import { EgressMappingSchema, IngressMappingSchema } from '../../src/mapping/types.js';
+import { getFreePort } from '../helpers/getFreePort.js';
 import { Is12Client } from '../helpers/Is12Client.js';
 
 import type { AdapterContext, AdapterLogger } from '../../src/adapters/Adapter.js';
@@ -32,9 +33,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SCENARIO_DIR = resolve(__dirname, '../../Scenarios/Scenario-03');
 const MODEL_DIR = resolve(SCENARIO_DIR, 'model');
 const MAPPING_DIR = resolve(SCENARIO_DIR, 'mapping');
-
-let _nextPort = 49600;
-function allocPort(): number { return _nextPort++; }
 
 const noop = () => {};
 const makeLogger = (): AdapterLogger => ({ info: noop, warn: noop, error: noop, debug: noop });
@@ -101,7 +99,7 @@ describe('E19.T10 — Scenario-03 live IS-12 + IS-04', () => {
   let txOid: number;
 
   beforeAll(async () => {
-    port = allocPort();
+    port = await getFreePort();
     const entities = loadEntities(resolve(MODEL_DIR, 'entities.yaml'));
     const datatypes = loadDatatypes(resolve(MODEL_DIR, 'datatypes.yaml'));
     const tree = loadTree(resolve(MODEL_DIR, 'tree.yaml'), entities, datatypes);

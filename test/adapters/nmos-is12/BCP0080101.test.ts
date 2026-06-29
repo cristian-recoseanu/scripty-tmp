@@ -38,6 +38,7 @@ import { NcMethodStatus } from '../../../src/adapters/nmos-is12/ms05/types.js';
 import { loadEntities, loadDatatypes, loadTree } from '../../../src/config/modelLoader.js';
 import { UceBus } from '../../../src/engine/bus/UceBus.js';
 import { UceEngine } from '../../../src/engine/UceEngine.js';
+import { getFreePort } from '../../helpers/getFreePort.js';
 import { Is12Client } from '../../helpers/Is12Client.js';
 
 import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
@@ -51,13 +52,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SCENARIO_DIR = resolve(__dirname, '../../../Scenarios/Scenario-02');
 const MODEL_DIR = resolve(SCENARIO_DIR, 'model');
 const MAPPING_DIR = resolve(SCENARIO_DIR, 'mapping');
-
-// ---------------------------------------------------------------------------
-// Port allocation (range distinct from other test files)
-// ---------------------------------------------------------------------------
-
-let _nextPort = 49900;
-function allocPort(): number { return _nextPort++; }
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -110,7 +104,7 @@ describe('BCP-008-01 — NcReceiverMonitor compliance', () => {
   let monitorOid: number;
 
   beforeAll(async () => {
-    const port = allocPort();
+    const port = await getFreePort();
 
     const entities = loadEntities(resolve(MODEL_DIR, 'entities.yaml'));
     const datatypes = loadDatatypes(resolve(MODEL_DIR, 'datatypes.yaml'));
