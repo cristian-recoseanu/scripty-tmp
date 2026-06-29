@@ -31,7 +31,7 @@
     "pino": "^10.3.1",
     "ws": "^8.18.0",
     "yaml": "^2.7.0",
-    "zod": "^3.23.8"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@cyclonedx/cyclonedx-npm": "^5.0.0",
