@@ -53,7 +53,7 @@ const require = createRequire(import.meta.url);
 // Ajv setup — eslint-disable covers all AJV any-typed API usage
 // ---------------------------------------------------------------------------
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, import/order */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, import-x/order */
 const schemaDatatypeDescriptor   = require('../../fixtures/ms05-schemas/NcDatatypeDescriptor.schema.json');
 const schemaClassDescriptor      = require('../../fixtures/ms05-schemas/NcClassDescriptor.schema.json');
 const schemaMemberDescriptor     = require('../../fixtures/ms05-schemas/NcBlockMemberDescriptor.schema.json');
@@ -80,13 +80,13 @@ const validateSubResponse     = makeValidator(schemaSubscriptionResponse);
 const validateError           = makeValidator(schemaError);
 
 function assertValid(validate: ReturnType<typeof makeValidator>, data: unknown, label: string): void {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+   
   const ok: boolean = validate(data);
   if (!ok) {
     throw new Error(`Schema validation failed for ${label}:\n${JSON.stringify(validate.errors, null, 2)}\nData: ${JSON.stringify(data, null, 2)}`);
   }
 }
-/* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, import/order */
+/* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, import-x/order */
 
 // ---------------------------------------------------------------------------
 // Test tree

@@ -156,13 +156,13 @@ async function main(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 if (process.argv.includes('--version') || process.argv.includes('-V')) {
-  // eslint-disable-next-line no-console
+   
   console.log(formatBuildInfo(loadBuildInfo()));
   process.exit(0);
 }
 
 main().catch((err: unknown) => {
-  // eslint-disable-next-line no-console
+   
   console.error('Fatal error during startup:', err instanceof Error ? err.message : String(err));
   process.exit(1);
 });
