@@ -171,7 +171,7 @@ const IngressSchema = z
   .object({
     id: z.string().min(1),
     protocol: z.string().min(1),
-    config: z.record(z.unknown()),
+    config: z.record(z.string(), z.unknown()),
     mapping: z.string().min(1),
   })
   .strict();
@@ -180,7 +180,7 @@ const EgressSchema = z
   .object({
     id: z.string().min(1),
     protocol: z.string().min(1),
-    config: z.record(z.unknown()),
+    config: z.record(z.string(), z.unknown()),
     mapping: z.string().min(1),
   })
   .strict();

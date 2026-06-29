@@ -92,7 +92,7 @@ export const ReverseSchema = z.object({
   encode: z.object({
     format: z.enum(['json', 'raw-string', 'raw-number']),
     /** For json: an object template where leaf string values may contain `{$value}`. */
-    template: z.record(z.unknown()).optional(),
+    template: z.record(z.string(), z.unknown()).optional(),
   }).strict(),
 }).strict();
 
@@ -107,7 +107,7 @@ export const IngressRuleSchema = z.object({
    * Protocol-specific match descriptor (e.g. `{ topicFilter: "..." }` for MQTT).
    * Kept as open record — the adapter validates its own match shape.
    */
-  match: z.record(z.unknown()),
+  match: z.record(z.string(), z.unknown()),
   target: z.object({
     /**
      * Location path template with `{captureVar}` placeholders.
