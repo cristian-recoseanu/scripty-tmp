@@ -65,17 +65,15 @@ const makeLogger = (): AdapterLogger => ({ info: noop, warn: noop, error: noop, 
 // ---------------------------------------------------------------------------
 
 describe('E18.T4 — Scenario-02 model artefacts', () => {
-  it('entities.yaml loads and registers all three entity definitions', () => {
+  it('entities.yaml loads and registers Block and ReceiverMonitor', () => {
     const reg = loadEntities(resolve(MODEL_DIR, 'entities.yaml'));
-    expect(reg.has('RootBlock')).toBe(true);
-    expect(reg.has('ReceiverMonitorsBlock')).toBe(true);
+    expect(reg.has('Block')).toBe(true);
     expect(reg.has('ReceiverMonitor')).toBe(true);
   });
 
-  it('RootBlock and ReceiverMonitorsBlock have no custom properties', () => {
+  it('Block has no custom properties', () => {
     const reg = loadEntities(resolve(MODEL_DIR, 'entities.yaml'));
-    expect(reg.get('RootBlock').properties).toHaveLength(0);
-    expect(reg.get('ReceiverMonitorsBlock').properties).toHaveLength(0);
+    expect(reg.get('Block').properties).toHaveLength(0);
   });
 
   it('ReceiverMonitor.linkStatus is numeric, read-only, and observable', () => {
@@ -177,18 +175,10 @@ describe('E18.T6 — IS-12 egress mapping', () => {
     expect(() => EgressMappingSchema.parse(raw)).not.toThrow();
   });
 
-  it('RootBlock is mapped to classId [1,1]', () => {
+  it('Block is mapped to classId [1,1]', () => {
     const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'egress.is12.json'), 'utf8')) as unknown;
     const mapping = EgressMappingSchema.parse(raw);
-    const cls = mapping.classes.find((c) => c.entityDef === 'RootBlock');
-    expect(cls).toBeDefined();
-    expect(cls!.classId).toEqual([1, 1]);
-  });
-
-  it('ReceiverMonitorsBlock is mapped to classId [1,1]', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'egress.is12.json'), 'utf8')) as unknown;
-    const mapping = EgressMappingSchema.parse(raw);
-    const cls = mapping.classes.find((c) => c.entityDef === 'ReceiverMonitorsBlock');
+    const cls = mapping.classes.find((c) => c.entityDef === 'Block');
     expect(cls).toBeDefined();
     expect(cls!.classId).toEqual([1, 1]);
   });
@@ -203,7 +193,6 @@ describe('E18.T6 — IS-12 egress mapping', () => {
     expect(prop).toBeDefined();
     expect(prop!.targetId).toEqual({ level: 4, index: 1 });
     expect(prop!.readOnly).toBe(true);
-    expect(prop!.observable).toBe(true);
   });
 });
 

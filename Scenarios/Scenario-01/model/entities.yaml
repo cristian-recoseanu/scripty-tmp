@@ -1,13 +1,8 @@
 entities:
   - entity_name: RootBlock
-    description: >-
-      Root block for Scenario-01. Exposes a single writable, observable string
-      property that is mapped to the IS-12 userLabel (NcObject 1p6) on the
-      egress side and to the MQTT topic on the ingress side.
     properties:
       - id: label
         type: string
         read_only: false
         observable: true
-        description: Human-readable label — projected onto IS-12 userLabel (1p6).
     methods: []

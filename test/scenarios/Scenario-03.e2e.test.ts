@@ -50,11 +50,11 @@ function httpGet(port: number, path: string): Promise<{ status: number; body: st
 }
 
 describe('E19.T4 — Scenario-03 model', () => {
-  it('loads entities for both monitor types and block containers', () => {
+  it('loads entities for both monitor types and Block', () => {
     const reg = loadEntities(resolve(MODEL_DIR, 'entities.yaml'));
     expect(reg.has('ReceiverMonitor')).toBe(true);
     expect(reg.has('SenderMonitor')).toBe(true);
-    expect(reg.has('SenderMonitorsBlock')).toBe(true);
+    expect(reg.has('Block')).toBe(true);
   });
 
   it('tree has receiver-monitors and sender-monitors branches', () => {

@@ -1,7 +1,6 @@
 /**
  * E7.T1 — YAML loader with env interpolation.
- * E7.T2 — Master config validation via JSON Schema (ajv) then zod.
- * E7.T5 — Returns fully-typed ParsedBridgeConfig.
+ * E7.T2+T5 — Master config validation via zod; returns fully-typed ParsedBridgeConfig.
  *
  * Rules:
  *  - ${VAR_NAME} placeholders are replaced with process.env values.
@@ -13,14 +12,12 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
-import { Ajv } from 'ajv';
 import { parse as parseYaml } from 'yaml';
 import { ZodError } from 'zod';
 
 import { BridgeConfigSchema } from './types.js';
 
 import type { ParsedBridgeConfig } from './types.js';
-import type { ErrorObject } from 'ajv';
 
 // ---------------------------------------------------------------------------
 // ConfigError
@@ -70,82 +67,7 @@ export function interpolateEnv(value: unknown, env: Record<string, string | unde
 }
 
 // ---------------------------------------------------------------------------
-// E7.T2 — JSON Schema (ajv) for the master bridge config
-// ---------------------------------------------------------------------------
-
-const BRIDGE_CONFIG_JSON_SCHEMA = {
-  type: 'object',
-  required: ['instance', 'model', 'ingress', 'egress'],
-  additionalProperties: false,
-  properties: {
-    instance: {
-      type: 'object',
-      required: ['name'],
-      additionalProperties: false,
-      properties: {
-        name: { type: 'string', minLength: 1 },
-        logLevel: { type: 'string', enum: ['trace', 'debug', 'info', 'warn', 'error', 'fatal'] },
-      },
-    },
-    model: {
-      type: 'object',
-      required: ['entities', 'datatypes', 'tree'],
-      additionalProperties: false,
-      properties: {
-        entities: { type: 'string', minLength: 1 },
-        datatypes: { type: 'string', minLength: 1 },
-        tree: { type: 'string', minLength: 1 },
-      },
-    },
-    ingress: {
-      type: 'object',
-      required: ['id', 'protocol', 'config', 'mapping'],
-      additionalProperties: false,
-      properties: {
-        id: { type: 'string', minLength: 1 },
-        protocol: { type: 'string', minLength: 1 },
-        config: { type: 'object' },
-        mapping: { type: 'string', minLength: 1 },
-      },
-    },
-    egress: {
-      type: 'array',
-      minItems: 1,
-      items: {
-        type: 'object',
-        required: ['id', 'protocol', 'config', 'mapping'],
-        additionalProperties: false,
-        properties: {
-          id: { type: 'string', minLength: 1 },
-          protocol: { type: 'string', minLength: 1 },
-          config: { type: 'object' },
-          mapping: { type: 'string', minLength: 1 },
-        },
-      },
-    },
-  },
-} as const;
-
-const _ajv = new Ajv({ allErrors: true });
-const _validateSchema = _ajv.compile(BRIDGE_CONFIG_JSON_SCHEMA);
-
-/**
- * Validate a raw (already interpolated) config object against the JSON Schema.
- * Returns the validated object or throws ConfigError with path-pointed messages.
- */
-export function validateConfigSchema(raw: unknown): unknown {
-  const valid = _validateSchema(raw);
-  if (!valid) {
-    const messages = (_validateSchema.errors ?? [])
-      .map((e: ErrorObject) => `  ${e.instancePath || '/'} ${e.message ?? ''}`)
-      .join('\n');
-    throw new ConfigError(`Bridge config schema validation failed:\n${messages}`);
-  }
-  return raw;
-}
-
-// ---------------------------------------------------------------------------
-// E7.T1+T2+T5 — loadBridgeConfig: YAML → interpolate → schema → zod → typed
+// E7.T1+T2+T5 — loadBridgeConfig: YAML → interpolate → zod → typed
 // ---------------------------------------------------------------------------
 
 /**
@@ -170,10 +92,7 @@ export function loadBridgeConfig(
   // E7.T1 — env interpolation
   const interpolated = interpolateEnv(raw, env);
 
-  // E7.T2 — JSON Schema validation (fast structural check + path-pointed errors)
-  validateConfigSchema(interpolated);
-
-  // E7.T5 — zod refinement (typed, strict)
+  // E7.T2+T5 — zod validation (typed, strict)
   try {
     return BridgeConfigSchema.parse(interpolated);
   } catch (err) {

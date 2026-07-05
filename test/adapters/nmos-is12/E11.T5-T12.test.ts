@@ -5,7 +5,7 @@
  * E11.T8  — Notifications (bus → subscribed sessions).
  * E11.T9  — Error handling & status codes.
  * E11.T10 — Data type marshalling (JSON native).
- * E11.T11 — IS-04 registration (behind registry.enabled flag — no-op in tests).
+ * E11.T11 — IS-04 registration (behind is04.registration.enabled flag — no-op in tests).
  * E11.T12 — Adapter config schema validation.
  */
 
@@ -630,12 +630,12 @@ describe('E11.T10 — Data type marshalling', () => {
 // E11.T11 — IS-04 registration flag (no-op / does not throw)
 // ---------------------------------------------------------------------------
 
-describe('E11.T11 — IS-04 registration (registry.enabled=false)', () => {
-  it('starts without error when registry.enabled=false (default)', async () => {
+describe('E11.T11 — IS-04 registration (is04.registration.enabled=false)', () => {
+  it('starts without error when is04.registration.enabled=false (default)', async () => {
     const adapter = new Is12EgressAdapter('is12-is04');
     const ctx: AdapterContext = {
       ...makeCtx(),
-      config: { wsPort: 0, registry: { enabled: false } },
+      config: { wsPort: 0, is04: { registration: { enabled: false } } },
     };
     await adapter.init(ctx);
     await adapter.start();

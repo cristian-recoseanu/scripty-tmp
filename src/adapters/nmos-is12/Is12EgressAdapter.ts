@@ -11,7 +11,7 @@
  *   T8  — Notifications (bus → subscribed sessions)
  *   T9  — Error handling & status codes
  *   T10 — Data type marshalling (JSON native — IS-12 wire format)
- *   T11 — IS-04 registration (behind registry.enabled flag)
+ *   T11 — IS-04 registration (behind is04.registration.enabled flag)
  *   T12 — Adapter config schema
  *   E17 — IS-04 Node API HTTP server + Registration API client
  */
@@ -23,6 +23,7 @@ import http from 'node:http';
 import { WebSocketServer } from 'ws';
 
 
+import { assertNoEgressGaps } from '../../config/validateMappings.js';
 import { EgressMapper } from '../../mapping/EgressMapper.js';
 import { EgressMappingSchema } from '../../mapping/types.js';
 
@@ -153,6 +154,7 @@ export class Is12EgressAdapter implements Adapter {
         const parsed2 = EgressMappingSchema.safeParse(raw);
         if (parsed2.success) {
           this._egressMapper = new EgressMapper(parsed2.data, ctx.entities);
+          assertNoEgressGaps(this._egressMapper, this.id);
         } else {
           ctx.logger.warn(`Is12EgressAdapter '${this.id}': egress mapping parse failed — ${parsed2.error.message}`);
         }

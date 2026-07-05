@@ -1,9 +1,9 @@
 location: root
-entity_def: RootBlock
+entity_def: Block
 properties: []
 children:
   - location: receiver-monitors
-    entity_def: ReceiverMonitorsBlock
+    entity_def: Block
     properties: []
     children:
       - location: rx-monitor-01

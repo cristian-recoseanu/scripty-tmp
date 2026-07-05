@@ -2,131 +2,185 @@
   "version": 1,
   "classes": [
     {
-      "entityDef": "RootBlock",
-      "classId": [1, 1],
-      "properties": [],
-      "methods": []
-    },
-    {
-      "entityDef": "ReceiverMonitorsBlock",
-      "classId": [1, 1],
+      "entityDef": "Block",
+      "classId": [
+        1,
+        1
+      ],
       "properties": [],
       "methods": []
     },
     {
       "entityDef": "ReceiverMonitor",
-      "classId": [1, 2, 2, 1],
+      "classId": [
+        1,
+        2,
+        2,
+        1
+      ],
       "methods": [
-        { "id": "GetLostPacketCounters",    "targetId": { "level": 4, "index": 1 } },
-        { "id": "GetLatePacketCounters",    "targetId": { "level": 4, "index": 2 } },
-        { "id": "ResetCountersAndMessages", "targetId": { "level": 4, "index": 3 } }
+        {
+          "id": "GetLostPacketCounters",
+          "targetId": {
+            "level": 4,
+            "index": 1
+          }
+        },
+        {
+          "id": "GetLatePacketCounters",
+          "targetId": {
+            "level": 4,
+            "index": 2
+          }
+        },
+        {
+          "id": "ResetCountersAndMessages",
+          "targetId": {
+            "level": 4,
+            "index": 3
+          }
+        }
       ],
       "properties": [
         {
           "id": "overallStatus",
-          "targetId": { "level": 3, "index": 1 },
+          "targetId": {
+            "level": 3,
+            "index": 1
+          },
           "datatype": "NcOverallStatus",
-          "observable": true,
           "readOnly": true
         },
         {
           "id": "overallStatusMessage",
-          "targetId": { "level": 3, "index": 2 },
-          "observable": true,
+          "targetId": {
+            "level": 3,
+            "index": 2
+          },
           "readOnly": true
         },
         {
           "id": "statusReportingDelay",
-          "targetId": { "level": 3, "index": 3 },
-          "observable": false,
+          "targetId": {
+            "level": 3,
+            "index": 3
+          },
           "readOnly": false
         },
         {
           "id": "linkStatus",
-          "targetId": { "level": 4, "index": 1 },
+          "targetId": {
+            "level": 4,
+            "index": 1
+          },
           "datatype": "NcLinkStatus",
-          "observable": true,
           "readOnly": true
         },
         {
           "id": "linkStatusMessage",
-          "targetId": { "level": 4, "index": 2 },
-          "observable": true,
+          "targetId": {
+            "level": 4,
+            "index": 2
+          },
           "readOnly": true
         },
         {
           "id": "linkStatusTransitionCounter",
-          "targetId": { "level": 4, "index": 3 },
-          "observable": true,
+          "targetId": {
+            "level": 4,
+            "index": 3
+          },
           "readOnly": true
         },
         {
           "id": "connectionStatus",
-          "targetId": { "level": 4, "index": 4 },
+          "targetId": {
+            "level": 4,
+            "index": 4
+          },
           "datatype": "NcConnectionStatus",
-          "observable": true,
           "readOnly": true
         },
         {
           "id": "connectionStatusMessage",
-          "targetId": { "level": 4, "index": 5 },
-          "observable": true,
+          "targetId": {
+            "level": 4,
+            "index": 5
+          },
           "readOnly": true
         },
         {
           "id": "connectionStatusTransitionCounter",
-          "targetId": { "level": 4, "index": 6 },
-          "observable": true,
+          "targetId": {
+            "level": 4,
+            "index": 6
+          },
           "readOnly": true
         },
         {
           "id": "externalSynchronizationStatus",
-          "targetId": { "level": 4, "index": 7 },
+          "targetId": {
+            "level": 4,
+            "index": 7
+          },
           "datatype": "NcSynchronizationStatus",
-          "observable": true,
           "readOnly": true
         },
         {
           "id": "externalSynchronizationStatusMessage",
-          "targetId": { "level": 4, "index": 8 },
-          "observable": true,
+          "targetId": {
+            "level": 4,
+            "index": 8
+          },
           "readOnly": true
         },
         {
           "id": "externalSynchronizationStatusTransitionCounter",
-          "targetId": { "level": 4, "index": 9 },
-          "observable": true,
+          "targetId": {
+            "level": 4,
+            "index": 9
+          },
           "readOnly": true
         },
         {
           "id": "synchronizationSourceId",
-          "targetId": { "level": 4, "index": 10 },
-          "observable": true,
+          "targetId": {
+            "level": 4,
+            "index": 10
+          },
           "readOnly": true
         },
         {
           "id": "streamStatus",
-          "targetId": { "level": 4, "index": 11 },
+          "targetId": {
+            "level": 4,
+            "index": 11
+          },
           "datatype": "NcStreamStatus",
-          "observable": true,
           "readOnly": true
         },
         {
           "id": "streamStatusMessage",
-          "targetId": { "level": 4, "index": 12 },
-          "observable": true,
+          "targetId": {
+            "level": 4,
+            "index": 12
+          },
           "readOnly": true
         },
         {
           "id": "streamStatusTransitionCounter",
-          "targetId": { "level": 4, "index": 13 },
-          "observable": true,
+          "targetId": {
+            "level": 4,
+            "index": 13
+          },
           "readOnly": true
         },
         {
           "id": "autoResetCountersAndMessages",
-          "targetId": { "level": 4, "index": 14 },
-          "observable": false,
+          "targetId": {
+            "level": 4,
+            "index": 14
+          },
           "readOnly": false
         }
       ]
