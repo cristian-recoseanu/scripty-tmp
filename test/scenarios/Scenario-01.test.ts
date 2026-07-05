@@ -13,7 +13,6 @@
  *    verifying write-back direction.
  */
 
-import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -36,7 +35,7 @@ import { NcMethodStatus } from '../../src/adapters/nmos-is12/ms05/types.js';
 import { loadBridgeConfig } from '../../src/config/loader.js';
 import { loadEntities, loadDatatypes, loadTree } from '../../src/config/modelLoader.js';
 import { UceBus } from '../../src/engine/bus/UceBus.js';
-import { IngressMappingSchema } from '../../src/mapping/types.js';
+import { loadIngressMapping, loadEgressMapping } from '../../src/mapping/loadMapping.js';
 import { getFreePort } from '../helpers/getFreePort.js';
 import { Is12Client } from '../helpers/Is12Client.js';
 
@@ -104,14 +103,14 @@ describe('E16.T1 — Scenario-01 model artefacts', () => {
 // ---------------------------------------------------------------------------
 
 describe('E16.T2 — MQTT ingress config + mapping', () => {
-  it('ingress.mqtt.json validates against IngressMappingSchema', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'ingress.mqtt.json'), 'utf8')) as unknown;
-    expect(() => IngressMappingSchema.parse(raw)).not.toThrow();
+  it('ingress.mqtt.yaml validates via loadIngressMapping', () => {
+    expect(() =>
+      loadIngressMapping(resolve(MAPPING_DIR, 'ingress.mqtt.yaml')),
+    ).not.toThrow();
   });
 
   it('ingress mapping rule targets root/label with raw-string decode', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'ingress.mqtt.json'), 'utf8')) as unknown;
-    const mapping = IngressMappingSchema.parse(raw);
+    const mapping = loadIngressMapping(resolve(MAPPING_DIR, 'ingress.mqtt.yaml'));
     expect(mapping.rules).toHaveLength(1);
     const rule = mapping.rules[0]!;
     expect(rule.match).toMatchObject({ topicFilter: 'devices/device-01/label' });
@@ -121,8 +120,7 @@ describe('E16.T2 — MQTT ingress config + mapping', () => {
   });
 
   it('ingress mapping rule has a reverse write-back with single strategy', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'ingress.mqtt.json'), 'utf8')) as unknown;
-    const mapping = IngressMappingSchema.parse(raw);
+    const mapping = loadIngressMapping(resolve(MAPPING_DIR, 'ingress.mqtt.yaml'));
     const reverse = mapping.rules[0]!.reverse;
     expect(reverse).toBeDefined();
     expect(reverse!.topicTemplate).toBe('devices/device-01/label');
@@ -135,7 +133,7 @@ describe('E16.T2 — MQTT ingress config + mapping', () => {
       url: 'mqtt://localhost:1883',
       clientId: 'scenario-01-bridge',
       subscriptions: [{ topicFilter: 'devices/device-01/label', qos: 1 }],
-      mapping: 'mapping/ingress.mqtt.json',
+      mapping: 'mapping/ingress.mqtt.yaml',
     };
     expect(() => MqttAdapterConfigSchema.parse(mqttConfig)).not.toThrow();
   });
@@ -156,7 +154,7 @@ describe('E16.T5 — bridge.yaml wiring', () => {
     const configPath = resolve(SCENARIO_DIR, 'bridge.yaml');
     const cfg = loadBridgeConfig(configPath, { MQTT_BROKER_URL: 'mqtt://localhost:1883' });
     expect(cfg.ingress.protocol).toBe('mqtt');
-    expect(cfg.ingress.mapping).toBe('mapping/ingress.mqtt.json');
+    expect(cfg.ingress.mapping).toBe('mapping/ingress.mqtt.yaml');
   });
 
   it('bridge.yaml egress block references the correct mapping file', () => {
@@ -164,7 +162,7 @@ describe('E16.T5 — bridge.yaml wiring', () => {
     const cfg = loadBridgeConfig(configPath, { MQTT_BROKER_URL: 'mqtt://localhost:1883' });
     expect(cfg.egress).toHaveLength(1);
     expect(cfg.egress[0]!.protocol).toBe('nmos-is12');
-    expect(cfg.egress[0]!.mapping).toBe('mapping/egress.is12.json');
+    expect(cfg.egress[0]!.mapping).toBe('mapping/egress.is12.yaml');
   });
 
   it('IS-12 adapter config block validates against Is12AdapterConfigSchema', () => {
@@ -240,9 +238,8 @@ describe('E16.T3 + T4 — IS-12 live adapter (userLabel + mandatory managers)', 
     expect((getResp.responses[0]?.result as { value: unknown }).value).toBe('hello-scenario-01');
   });
 
-  it('T3 — egress.is12.json validates against Is12AdapterConfigSchema (egress mapping file is valid JSON)', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'egress.is12.json'), 'utf8')) as unknown;
-    const mapping = raw as { version: number; classes: { entityDef: string; classId: number[] }[] };
+  it('T3 — egress.is12.yaml loads with RootBlock classId [1,1]', () => {
+    const mapping = loadEgressMapping(resolve(MAPPING_DIR, 'egress.is12.yaml'));
     expect(mapping.version).toBe(1);
     expect(mapping.classes[0]?.entityDef).toBe('RootBlock');
     expect(mapping.classes[0]?.classId).toEqual([1, 1]);

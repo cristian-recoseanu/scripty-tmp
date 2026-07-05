@@ -164,7 +164,7 @@ export interface PropertyIdMap {
   isSequence(oid: number, propertyName: string): boolean;
   /**
    * Returns the statically configured NcTouchpoints for this oid, or null if none.
-   * Sourced from the `instances[].touchpoints` field in egress.is12.json.
+   * Sourced from the `instances[].touchpoints` field in egress mapping YAML.
    */
   touchpoints(oid: number): unknown[] | null;
 }

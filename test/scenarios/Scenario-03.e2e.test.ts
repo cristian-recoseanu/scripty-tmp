@@ -2,7 +2,6 @@
  * E19 — Scenario-03: dual monitors, per-domain-status MQTT, BCP-008-02 sender.
  */
 
-import { readFileSync } from 'node:fs';
 import http from 'node:http';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,7 +21,7 @@ import { loadEntities, loadDatatypes, loadTree } from '../../src/config/modelLoa
 import { makeSetPropertyOp } from '../../src/engine/bus/operations.js';
 import { UceBus } from '../../src/engine/bus/UceBus.js';
 import { UceEngine } from '../../src/engine/UceEngine.js';
-import { EgressMappingSchema, IngressMappingSchema } from '../../src/mapping/types.js';
+import { loadIngressMapping, loadEgressMapping } from '../../src/mapping/loadMapping.js';
 import { getFreePort } from '../helpers/getFreePort.js';
 import { Is12Client } from '../helpers/Is12Client.js';
 
@@ -68,16 +67,14 @@ describe('E19.T4 — Scenario-03 model', () => {
 
 describe('E19.T5 — Scenario-03 ingress mapping', () => {
   it('has 10 rules for domain statuses + sync source ids', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'ingress.mqtt.json'), 'utf8')) as unknown;
-    const mapping = IngressMappingSchema.parse(raw);
+    const mapping = loadIngressMapping(resolve(MAPPING_DIR, 'ingress.mqtt.yaml'));
     expect(mapping.rules).toHaveLength(10);
   });
 });
 
 describe('E19.T6+T7 — Scenario-03 egress + bridge.yaml', () => {
   it('egress maps SenderMonitor to [1,2,2,2]', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'egress.is12.json'), 'utf8')) as unknown;
-    const mapping = EgressMappingSchema.parse(raw);
+    const mapping = loadEgressMapping(resolve(MAPPING_DIR, 'egress.is12.yaml'));
     const cls = mapping.classes.find((c) => c.entityDef === 'SenderMonitor');
     expect(cls!.classId).toEqual([1, 2, 2, 2]);
     expect(mapping.instances).toHaveLength(2);
@@ -113,7 +110,7 @@ describe('E19.T10 — Scenario-03 live IS-12 + IS-04', () => {
       config: {
         wsPort: port,
         host: '127.0.0.1',
-        mapping: resolve(MAPPING_DIR, 'egress.is12.json'),
+        mapping: resolve(MAPPING_DIR, 'egress.is12.yaml'),
         is04: {
           nodeApi: { enabled: true, httpPort: port, host: '127.0.0.1' },
           registration: { enabled: false },

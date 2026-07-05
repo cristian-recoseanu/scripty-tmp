@@ -133,7 +133,7 @@ src/
     mqtt/            # Ingress example: MQTT
     nmos-is12/       # Egress example: IS-12 / MS-05
   mapping/           # Config-driven Ingress/Egress translation DSLs + transforms
-  config/            # YAML/JSON config loading + schema validation
+  config/            # YAML config loading + schema validation
   observability/     # Structured logging, metrics, health
   app.ts             # Bootstrap entry point
 Scenarios/           # Worked bridge examples (model, mappings, bridge.yaml, README)

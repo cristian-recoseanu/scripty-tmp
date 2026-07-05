@@ -1,0 +1,17 @@
+version: 1
+rules:
+  - match:
+      topicFilter: devices/device-01/label
+    target:
+      location: root
+      property: label
+      onUnresolved: warn
+    decode:
+      format: raw-string
+    transform: []
+    reverse:
+      topicTemplate: devices/device-01/label
+      writeStrategy: single
+      encode:
+        format: raw-string
+

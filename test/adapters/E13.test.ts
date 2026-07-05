@@ -21,6 +21,7 @@ import { join } from 'node:path';
 
 import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest';
 import WebSocket from 'ws';
+import { stringify } from 'yaml';
 
 import { Is12EgressAdapter } from '../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import { OID_ROOT } from '../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
@@ -959,8 +960,8 @@ describe('E13.T3 — MQTT echo suppression (integration with fake client)', asyn
   function makeIngressCtx(tree: InstanceTree, bus: UceBus, mapping: IngressMapping): AdapterContext {
     const dir = join(tmpdir(), `e13-${Date.now()}`);
     mkdirSync(dir, { recursive: true });
-    const mapPath = join(dir, 'mapping.json');
-    writeFileSync(mapPath, JSON.stringify(mapping));
+    const mapPath = join(dir, 'mapping.yaml');
+    writeFileSync(mapPath, stringify(mapping, { lineWidth: 0 }) + '\n');
     return {
       bus,
       tree,

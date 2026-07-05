@@ -35,7 +35,7 @@ IS-12 sends a `PropertyChanged` notification to all subscribed controllers. Ther
 write-back (the property is read-only to IS-12 controllers).
 
 The monitor's **touchpoint** (`1p7`) references an IS-04 receiver UUID configured in
-`mapping/egress.is12.json`. That receiver resource is hosted on an **external** IS-04 node —
+`mapping/egress.is12.yaml`. That receiver resource is hosted on an **external** IS-04 node —
 this bridge does not advertise it on its own Node API.
 
 ---
@@ -63,8 +63,8 @@ Scenarios/Scenario-02/
     datatypes.yaml              # empty — no struct type_defs needed
     tree.yaml                   # root → receiver-monitors → rx-monitor-01 (linkStatus=1)
   mapping/
-    ingress.mqtt.json           # MQTT topic → linkStatus, clamp 1..3
-    egress.is12.json            # classId overrides + linkStatus → {level:4,index:1}
+    ingress.mqtt.yaml           # MQTT topic → linkStatus, clamp 1..3
+    egress.is12.yaml            # classId overrides + linkStatus → {level:4,index:1}
   README.md                     # this file
 ```
 
@@ -253,7 +253,7 @@ Expected: `{ "status": 200, "value": 2 }`.
 
 ## Touchpoints (external IS-04 resources)
 
-The receiver monitor touchpoint is configured in `mapping/egress.is12.json` and returned on
+The receiver monitor touchpoint is configured in `mapping/egress.is12.yaml` and returned on
 IS-12 `touchpoints` (`1p7`). The UUID refers to a receiver on **another** IS-04 node — it is
 **not** served by this bridge's Node API.
 
@@ -323,5 +323,5 @@ The device's `controls` array contains:
 | No IS-12 notification received | Not subscribed to oid 5 | Send a `Subscription` message including oid 5 |
 | `linkStatus` not updating | Out-of-range published value | Publish `1`, `2`, or `3` (clamp handles edge values too) |
 | IS-04 registration fails | Registry not reachable | Set `registration.enabled: false` in `bridge.yaml` or start the registry |
-| Touchpoint UUID not found on IS-04 | Queried this bridge's Node API | Touchpoints reference an **external** node — query that host; UUID is in `mapping/egress.is12.json` |
+| Touchpoint UUID not found on IS-04 | Queried this bridge's Node API | Touchpoints reference an **external** node — query that host; UUID is in `mapping/egress.is12.yaml` |
 | `WS connection refused` | Bridge not running or wrong port | Connect to **port 9004** (IS-04/IS-12 shared port) at `/x-nmos/ncp/v1.0` |

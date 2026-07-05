@@ -17,7 +17,7 @@ import { connectAsync } from 'mqtt';
 
 
 import { IngressMapper } from '../../mapping/IngressMapper.js';
-import { IngressMappingSchema } from '../../mapping/types.js';
+import { loadIngressMapping } from '../../mapping/loadMapping.js';
 
 import { MQTT_CONFIG_JSON_SCHEMA, MqttAdapterConfigSchema } from './config.js';
 
@@ -102,11 +102,10 @@ export class MqttIngressAdapter implements Adapter {
     this._config = parsed.data;
     this._reconnectDelay = this._config.reconnectPeriodMs;
 
-    // Load ingress mapping JSON
+    // Load ingress mapping (YAML)
     try {
       const mappingPath = this._resolveMappingPath(this._config.mapping);
-      const rawMapping = JSON.parse(readFileSync(mappingPath, 'utf8')) as unknown;
-      const mapping = IngressMappingSchema.parse(rawMapping);
+      const mapping = loadIngressMapping(mappingPath);
       this._mapper = new IngressMapper(mapping, ctx.tree, {
         warn: (m) => ctx.logger.warn(m),
         error: (m) => ctx.logger.error(m),

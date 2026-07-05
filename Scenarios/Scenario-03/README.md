@@ -55,7 +55,7 @@ All status properties are read-only on IS-12; ingress drives updates and the ada
 
 ## Touchpoints (external IS-04 resources)
 
-Monitor touchpoints are configured in `mapping/egress.is12.json` and returned on IS-12
+Monitor touchpoints are configured in `mapping/egress.is12.yaml` and returned on IS-12
 `touchpoints` (`1p7`). These UUIDs refer to sender/receiver resources on **another** IS-04
 node — they are **not** served by this bridge's Node API.
 
@@ -131,6 +131,6 @@ npm run validate
 | Symptom | Check |
 |---------|-------|
 | `overallStatus` stays Inactive | Receiver: set both `connectionStatus` and `streamStatus` ≠ 0. Sender: set both `transmissionStatus` and `essenceStatus` ≠ 0. |
-| Touchpoint UUID not found on IS-04 | Touchpoints reference resources on an **external** node — query that host, not this bridge. UUIDs are set in `mapping/egress.is12.json`. |
+| Touchpoint UUID not found on IS-04 | Touchpoints reference resources on an **external** node — query that host, not this bridge. UUIDs are set in `mapping/egress.is12.yaml`. |
 | No IS-12 notifications | Subscribe to monitor oids; publish to the correct MQTT topic from the table above. |
 | Wrong port in nmos-testing | Use **9005** for both HTTP and WebSocket when IS-04 Node API is enabled. |

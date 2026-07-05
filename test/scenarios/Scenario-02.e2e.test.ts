@@ -12,7 +12,6 @@
  *   T9 — E2E: bus publish → IS-12 Notification on linkStatus 4p1
  */
 
-import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -37,7 +36,7 @@ import { loadEntities, loadDatatypes, loadTree } from '../../src/config/modelLoa
 import { makePropertyChangedOp, makeSetPropertyOp } from '../../src/engine/bus/operations.js';
 import { UceBus } from '../../src/engine/bus/UceBus.js';
 import { UceEngine } from '../../src/engine/UceEngine.js';
-import { IngressMappingSchema, EgressMappingSchema } from '../../src/mapping/types.js';
+import { loadIngressMapping, loadEgressMapping } from '../../src/mapping/loadMapping.js';
 import { getFreePort } from '../helpers/getFreePort.js';
 import { Is12Client } from '../helpers/Is12Client.js';
 
@@ -119,14 +118,14 @@ describe('E18.T4 — Scenario-02 model artefacts', () => {
 // ---------------------------------------------------------------------------
 
 describe('E18.T5 — MQTT ingress mapping + validation', () => {
-  it('ingress.mqtt.json validates against IngressMappingSchema', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'ingress.mqtt.json'), 'utf8')) as unknown;
-    expect(() => IngressMappingSchema.parse(raw)).not.toThrow();
+  it('ingress.mqtt.yaml validates via loadIngressMapping', () => {
+    expect(() =>
+      loadIngressMapping(resolve(MAPPING_DIR, 'ingress.mqtt.yaml')),
+    ).not.toThrow();
   });
 
   it('rule targets root/receiver-monitors/rx-monitor-01 with linkStatus property', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'ingress.mqtt.json'), 'utf8')) as unknown;
-    const mapping = IngressMappingSchema.parse(raw);
+    const mapping = loadIngressMapping(resolve(MAPPING_DIR, 'ingress.mqtt.yaml'));
     expect(mapping.rules).toHaveLength(1);
     const rule = mapping.rules[0]!;
     expect(rule.match).toMatchObject({ topicFilter: 'devices/device-01/receivers/rx-1/link-status' });
@@ -136,8 +135,7 @@ describe('E18.T5 — MQTT ingress mapping + validation', () => {
   });
 
   it('rule has a clamp 1..3 transform', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'ingress.mqtt.json'), 'utf8')) as unknown;
-    const mapping = IngressMappingSchema.parse(raw);
+    const mapping = loadIngressMapping(resolve(MAPPING_DIR, 'ingress.mqtt.yaml'));
     const transforms = mapping.rules[0]!.transform;
     expect(transforms).toHaveLength(1);
     const clamp = transforms[0]!;
@@ -149,8 +147,7 @@ describe('E18.T5 — MQTT ingress mapping + validation', () => {
   });
 
   it('rule has no reverse mapping (linkStatus is read-only)', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'ingress.mqtt.json'), 'utf8')) as unknown;
-    const mapping = IngressMappingSchema.parse(raw);
+    const mapping = loadIngressMapping(resolve(MAPPING_DIR, 'ingress.mqtt.yaml'));
     expect(mapping.rules[0]!.reverse).toBeUndefined();
   });
 
@@ -159,7 +156,7 @@ describe('E18.T5 — MQTT ingress mapping + validation', () => {
       url: 'mqtt://localhost:1883',
       clientId: 'scenario-02-bridge',
       subscriptions: [{ topicFilter: 'devices/device-01/receivers/rx-1/link-status', qos: 0 }],
-      mapping: 'mapping/ingress.mqtt.json',
+      mapping: 'mapping/ingress.mqtt.yaml',
     };
     expect(() => MqttAdapterConfigSchema.parse(mqttConfig)).not.toThrow();
   });
@@ -170,22 +167,21 @@ describe('E18.T5 — MQTT ingress mapping + validation', () => {
 // ---------------------------------------------------------------------------
 
 describe('E18.T6 — IS-12 egress mapping', () => {
-  it('egress.is12.json validates against EgressMappingSchema', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'egress.is12.json'), 'utf8')) as unknown;
-    expect(() => EgressMappingSchema.parse(raw)).not.toThrow();
+  it('egress.is12.yaml validates via loadEgressMapping', () => {
+    expect(() =>
+      loadEgressMapping(resolve(MAPPING_DIR, 'egress.is12.yaml')),
+    ).not.toThrow();
   });
 
   it('Block is mapped to classId [1,1]', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'egress.is12.json'), 'utf8')) as unknown;
-    const mapping = EgressMappingSchema.parse(raw);
+    const mapping = loadEgressMapping(resolve(MAPPING_DIR, 'egress.is12.yaml'));
     const cls = mapping.classes.find((c) => c.entityDef === 'Block');
     expect(cls).toBeDefined();
     expect(cls!.classId).toEqual([1, 1]);
   });
 
   it('ReceiverMonitor is mapped to classId [1,2,2,1] with linkStatus at {level:4,index:1}', () => {
-    const raw = JSON.parse(readFileSync(resolve(MAPPING_DIR, 'egress.is12.json'), 'utf8')) as unknown;
-    const mapping = EgressMappingSchema.parse(raw);
+    const mapping = loadEgressMapping(resolve(MAPPING_DIR, 'egress.is12.yaml'));
     const cls = mapping.classes.find((c) => c.entityDef === 'ReceiverMonitor');
     expect(cls).toBeDefined();
     expect(cls!.classId).toEqual([1, 2, 2, 1]);
@@ -211,7 +207,7 @@ describe('E18.T7 — bridge.yaml wiring', () => {
     const configPath = resolve(SCENARIO_DIR, 'bridge.yaml');
     const cfg = loadBridgeConfig(configPath, { MQTT_BROKER_URL: 'mqtt://localhost:1883' });
     expect(cfg.ingress.protocol).toBe('mqtt');
-    expect(cfg.ingress.mapping).toBe('mapping/ingress.mqtt.json');
+    expect(cfg.ingress.mapping).toBe('mapping/ingress.mqtt.yaml');
   });
 
   it('bridge.yaml egress block references the correct mapping file', () => {
@@ -219,7 +215,7 @@ describe('E18.T7 — bridge.yaml wiring', () => {
     const cfg = loadBridgeConfig(configPath, { MQTT_BROKER_URL: 'mqtt://localhost:1883' });
     expect(cfg.egress).toHaveLength(1);
     expect(cfg.egress[0]!.protocol).toBe('nmos-is12');
-    expect(cfg.egress[0]!.mapping).toBe('mapping/egress.is12.json');
+    expect(cfg.egress[0]!.mapping).toBe('mapping/egress.is12.yaml');
   });
 
   it('IS-12 adapter config block validates against Is12AdapterConfigSchema', () => {
@@ -261,7 +257,7 @@ describe('E18.T1+T2+T3+T6+T9 — IS-12 live adapter (nested blocks, linkStatus, 
       config: {
         wsPort: port,
         host: '0.0.0.0',
-        mapping: resolve(MAPPING_DIR, 'egress.is12.json'),  // resolved egress mapping path
+        mapping: resolve(MAPPING_DIR, 'egress.is12.yaml'),
       },
     };
 
