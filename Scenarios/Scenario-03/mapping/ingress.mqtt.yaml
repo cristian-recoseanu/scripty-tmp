@@ -1,0 +1,115 @@
+version: 1
+rules:
+  - match:
+      topicFilter: devices/device-01/receivers/rx-1/link-status
+    target:
+      location: root/receiver-monitors/rx-monitor-01
+      property: linkStatus
+      onUnresolved: warn
+    decode:
+      format: raw-number
+    transform:
+      - op: clamp
+        min: 1
+        max: 3
+  - match:
+      topicFilter: devices/device-01/receivers/rx-1/connection-status
+    target:
+      location: root/receiver-monitors/rx-monitor-01
+      property: connectionStatus
+      onUnresolved: warn
+    decode:
+      format: raw-number
+    transform:
+      - op: clamp
+        min: 0
+        max: 3
+  - match:
+      topicFilter: devices/device-01/receivers/rx-1/external-sync-status
+    target:
+      location: root/receiver-monitors/rx-monitor-01
+      property: externalSynchronizationStatus
+      onUnresolved: warn
+    decode:
+      format: raw-number
+    transform:
+      - op: clamp
+        min: 0
+        max: 3
+  - match:
+      topicFilter: devices/device-01/receivers/rx-1/stream-status
+    target:
+      location: root/receiver-monitors/rx-monitor-01
+      property: streamStatus
+      onUnresolved: warn
+    decode:
+      format: raw-number
+    transform:
+      - op: clamp
+        min: 0
+        max: 3
+  - match:
+      topicFilter: devices/device-01/receivers/rx-1/sync-source-id
+    target:
+      location: root/receiver-monitors/rx-monitor-01
+      property: synchronizationSourceId
+      onUnresolved: warn
+    decode:
+      format: raw-string
+  - match:
+      topicFilter: devices/device-01/senders/tx-1/link-status
+    target:
+      location: root/sender-monitors/tx-monitor-01
+      property: linkStatus
+      onUnresolved: warn
+    decode:
+      format: raw-number
+    transform:
+      - op: clamp
+        min: 1
+        max: 3
+  - match:
+      topicFilter: devices/device-01/senders/tx-1/transmission-status
+    target:
+      location: root/sender-monitors/tx-monitor-01
+      property: transmissionStatus
+      onUnresolved: warn
+    decode:
+      format: raw-number
+    transform:
+      - op: clamp
+        min: 0
+        max: 3
+  - match:
+      topicFilter: devices/device-01/senders/tx-1/external-sync-status
+    target:
+      location: root/sender-monitors/tx-monitor-01
+      property: externalSynchronizationStatus
+      onUnresolved: warn
+    decode:
+      format: raw-number
+    transform:
+      - op: clamp
+        min: 0
+        max: 3
+  - match:
+      topicFilter: devices/device-01/senders/tx-1/essence-status
+    target:
+      location: root/sender-monitors/tx-monitor-01
+      property: essenceStatus
+      onUnresolved: warn
+    decode:
+      format: raw-number
+    transform:
+      - op: clamp
+        min: 0
+        max: 3
+  - match:
+      topicFilter: devices/device-01/senders/tx-1/sync-source-id
+    target:
+      location: root/sender-monitors/tx-monitor-01
+      property: synchronizationSourceId
+      onUnresolved: warn
+    decode:
+      format: raw-string
+

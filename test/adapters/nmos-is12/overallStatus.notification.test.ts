@@ -56,7 +56,7 @@ describe('derived overallStatus notification timing', () => {
       types: datatypes,
       entities,
       logger: makeLogger(),
-      config: { wsPort: port, host: '127.0.0.1', mapping: resolve(MAPPING_DIR, 'egress.is12.json') },
+      config: { wsPort: port, host: '127.0.0.1', mapping: resolve(MAPPING_DIR, 'egress.is12.yaml') },
     };
 
     adapter = new Is12EgressAdapter('is12-overall-notif');

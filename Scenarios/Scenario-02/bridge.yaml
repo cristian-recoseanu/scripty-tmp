@@ -10,7 +10,7 @@ model:
 ingress:
   id: mqtt-ingress
   protocol: mqtt
-  mapping: mapping/ingress.mqtt.json
+  mapping: mapping/ingress.mqtt.yaml
   config:
     url: "${MQTT_BROKER_URL:-mqtt://localhost:1883}"
     clientId: scenario-02-bridge
@@ -21,7 +21,7 @@ ingress:
 egress:
   - id: is12-egress
     protocol: nmos-is12
-    mapping: mapping/egress.is12.json
+    mapping: mapping/egress.is12.yaml
     config:
       # When is04.nodeApi.enabled is true the IS-04 HTTP server and the IS-12
       # WebSocket share a single port (httpPort below). wsPort is only used in

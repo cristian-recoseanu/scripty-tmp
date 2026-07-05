@@ -1,0 +1,13 @@
+version: 1
+classes:
+  - entityDef: RootBlock
+    classId:
+      - 1
+      - 1
+    properties:
+      - id: label
+        targetId:
+          level: 1
+          index: 6
+    methods: []
+

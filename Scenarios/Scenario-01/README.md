@@ -188,6 +188,6 @@ Scenarios/Scenario-01/
 │   ├── datatypes.yaml           # Empty (no struct types needed)
 │   └── tree.yaml                # Root instance with initial label=""
 └── mapping/
-    ├── ingress.mqtt.json        # MQTT topic → root.label rule + write-back
-    └── egress.is12.json         # RootBlock.label → IS-12 userLabel (1p6)
+    ├── ingress.mqtt.yaml        # MQTT topic → root.label rule + write-back
+    └── egress.is12.yaml         # RootBlock.label → IS-12 userLabel (1p6)
 ```

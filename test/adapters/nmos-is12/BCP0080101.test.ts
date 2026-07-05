@@ -123,7 +123,7 @@ describe('BCP-008-01 — NcReceiverMonitor compliance', () => {
       config: {
         wsPort: port,
         host: '0.0.0.0',
-        mapping: resolve(MAPPING_DIR, 'egress.is12.json'),
+        mapping: resolve(MAPPING_DIR, 'egress.is12.yaml'),
       },
     };
 

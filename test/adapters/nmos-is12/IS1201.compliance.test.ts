@@ -1,18 +1,18 @@
 /**
  * E15.T8 — IS1201 Conformance Suite (in-process translation).
  *
- * Translates AMWA nmos-testing IS1201Test.py (test_02..test_11) into
+ * Translates AMWA nmos-testing IS1201Test.py (test_01..test_11) into
  * Vitest integration tests against a live Is12EgressAdapter instance.
- *
- * test_01 is intentionally skipped — it requires IS-04 registry interactions
- * that are out of scope for the egress adapter unit under test.
  *
  * Source: https://github.com/AMWA-TV/nmos-testing/blob/master/nmostesting/suites/IS1201Test.py
  */
 
+import http from 'node:http';
+
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import WebSocket from 'ws';
 
+import { NCP_CONTROL_TYPE } from '../../../src/adapters/nmos-is12/is04/resources.js';
 import { Is12EgressAdapter } from '../../../src/adapters/nmos-is12/Is12EgressAdapter.js';
 import { OID_DEVICE_MANAGER } from '../../../src/adapters/nmos-is12/ms05/IdentityRegistry.js';
 import { NC_OBJECT_METHOD } from '../../../src/adapters/nmos-is12/ms05/NcObjectMethods.js';
@@ -26,6 +26,7 @@ import { InstanceNodeImpl } from '../../../src/engine/model/ObjectNodeImpl.js';
 import { InstanceTree } from '../../../src/engine/model/ObjectTree.js';
 import { DatatypeRegistry } from '../../../src/engine/types/DatatypeRegistry.js';
 import { EntityRegistry } from '../../../src/engine/types/EntityRegistry.js';
+import { getFreePort } from '../../helpers/getFreePort.js';
 import { Is12Client } from '../../helpers/Is12Client.js';
 
 import type { AdapterContext, AdapterLogger } from '../../../src/adapters/Adapter.js';
@@ -105,12 +106,77 @@ function rawReceive(ws: WebSocket, timeoutMs = 2000): Promise<unknown> {
   });
 }
 
+function httpGet(port: number, path: string): Promise<{ status: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    http.get(`http://127.0.0.1:${port}${path}`, (res) => {
+      const chunks: Buffer[] = [];
+      res.on('data', (c: Buffer) => chunks.push(c));
+      res.on('end', () =>
+        resolve({ status: res.statusCode ?? 0, body: Buffer.concat(chunks).toString() }),
+      );
+    }).once('error', reject);
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Suite
 // ---------------------------------------------------------------------------
 
-describe('IS1201 Conformance — test_01 (IS-04)', () => {
-  it.skip('test_01: IS-04 registration — out of scope for egress adapter', () => {});
+describe('IS1201 Conformance — test_01 (IS-04 control advertisement)', () => {
+  let adapter: Is12EgressAdapter;
+  let port: number;
+  const wsPath = '/x-nmos/ncp/v1.0';
+
+  beforeEach(async () => {
+    port = await getFreePort();
+    adapter = new Is12EgressAdapter('is1201-t01');
+    const ctx = makeCtx();
+    ctx.config = {
+      wsPort: port,
+      host: '127.0.0.1',
+      wsPath,
+      is04: {
+        nodeApi: {
+          enabled: true,
+          httpPort: port,
+          host: '127.0.0.1',
+          advertiseHost: '127.0.0.1',
+        },
+        registration: { enabled: false },
+      },
+    };
+    await adapter.init(ctx);
+    await adapter.start();
+  });
+
+  afterEach(async () => { await adapter.stop(); });
+
+  it('test_01: Node advertises IS-12 NCP control endpoint matching the API under test', async () => {
+    const listRes = await httpGet(port, '/x-nmos/node/v1.3/devices/');
+    expect(listRes.status).toBe(200);
+    const devices = JSON.parse(listRes.body) as { id: string }[];
+    expect(devices.length).toBeGreaterThan(0);
+
+    const deviceId = devices[0]!.id;
+    const deviceRes = await httpGet(port, `/x-nmos/node/v1.3/devices/${deviceId}`);
+    expect(deviceRes.status).toBe(200);
+
+    const device = JSON.parse(deviceRes.body) as {
+      controls: { type: string; href: string; authorization: boolean }[];
+    };
+    const control = device.controls.find((c) => c.type === NCP_CONTROL_TYPE);
+    expect(control).toBeDefined();
+
+    const expectedHref = `ws://127.0.0.1:${port}${wsPath}`;
+    expect(control!.href).toBe(expectedHref);
+
+    const ws = await new Promise<WebSocket>((resolve, reject) => {
+      const client = new WebSocket(expectedHref);
+      client.once('open', () => resolve(client));
+      client.once('error', reject);
+    });
+    ws.close();
+  });
 });
 
 // ---------------------------------------------------------------------------

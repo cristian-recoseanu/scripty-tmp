@@ -17,6 +17,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { stringify } from 'yaml';
 
 import { MqttAdapterConfigSchema, MQTT_CONFIG_JSON_SCHEMA } from '../../../src/adapters/mqtt/config.js';
 import { MqttIngressAdapter } from '../../../src/adapters/mqtt/MqttIngressAdapter.js';
@@ -97,10 +98,10 @@ function makeTree(): InstanceTree {
   return tree;
 }
 
-/** Write a temp mapping JSON file and return its absolute path. */
-function writeTempMapping(rules: unknown[], dir: string, name = 'mapping.json'): string {
+/** Write a temp mapping YAML file and return its absolute path. */
+function writeTempMapping(rules: unknown[], dir: string, name = 'mapping.yaml'): string {
   const path = join(dir, name);
-  writeFileSync(path, JSON.stringify({ version: 1, rules }));
+  writeFileSync(path, stringify({ version: 1, rules }, { lineWidth: 0 }) + '\n');
   return path;
 }
 
@@ -156,7 +157,7 @@ describe('E10.T7 — MqttAdapterConfigSchema', () => {
   const validBase = {
     url: 'mqtt://localhost:1883',
     subscriptions: [{ topicFilter: 'sensors/+id/temp' }],
-    mapping: './mapping.json',
+    mapping: './mapping.yaml',
   };
 
   it('accepts a minimal valid config', () => {
@@ -239,7 +240,7 @@ describe('E10.T1 — Connection management', () => {
     const bad = new MqttIngressAdapter('x');
     await expect(bad.init({
       ...ctx,
-      config: { url: 'mqtt://localhost', subscriptions: [{ topicFilter: 'a' }], mapping: '/no/such/file.json' },
+      config: { url: 'mqtt://localhost', subscriptions: [{ topicFilter: 'a' }], mapping: '/no/such/file.yaml' },
     })).rejects.toThrow();
   });
 

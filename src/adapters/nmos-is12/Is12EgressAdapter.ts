@@ -17,7 +17,6 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import { readFileSync } from 'node:fs';
 import http from 'node:http';
 
 import { WebSocketServer } from 'ws';
@@ -25,7 +24,7 @@ import { WebSocketServer } from 'ws';
 
 import { assertNoEgressGaps } from '../../config/validateMappings.js';
 import { EgressMapper } from '../../mapping/EgressMapper.js';
-import { EgressMappingSchema } from '../../mapping/types.js';
+import { loadEgressMapping } from '../../mapping/loadMapping.js';
 
 
 import { Is12AdapterConfigSchema, IS12_CONFIG_JSON_SCHEMA } from './config.js';
@@ -150,14 +149,8 @@ export class Is12EgressAdapter implements Adapter {
     const mappingPath = (ctx.config as Record<string, unknown>).mapping;
     if (typeof mappingPath === 'string') {
       try {
-        const raw = JSON.parse(readFileSync(mappingPath, 'utf-8')) as unknown;
-        const parsed2 = EgressMappingSchema.safeParse(raw);
-        if (parsed2.success) {
-          this._egressMapper = new EgressMapper(parsed2.data, ctx.entities);
-          assertNoEgressGaps(this._egressMapper, this.id);
-        } else {
-          ctx.logger.warn(`Is12EgressAdapter '${this.id}': egress mapping parse failed — ${parsed2.error.message}`);
-        }
+        this._egressMapper = new EgressMapper(loadEgressMapping(mappingPath), ctx.entities);
+        assertNoEgressGaps(this._egressMapper, this.id);
       } catch (e) {
         ctx.logger.warn(`Is12EgressAdapter '${this.id}': failed to load egress mapping from '${mappingPath}' — ${String(e)}`);
       }

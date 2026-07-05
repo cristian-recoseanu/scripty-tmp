@@ -5,10 +5,8 @@
  * deployments fail fast with actionable ConfigErrors.
  */
 
-import { readFileSync } from 'node:fs';
-
 import { EgressMapper } from '../mapping/EgressMapper.js';
-import { EgressMappingSchema, IngressMappingSchema } from '../mapping/types.js';
+import { loadEgressMapping, loadIngressMapping } from '../mapping/loadMapping.js';
 
 import { ConfigError } from './loader.js';
 import { crossValidateMappings } from './modelLoader.js';
@@ -17,15 +15,6 @@ import type { MappingRef } from './modelLoader.js';
 import type { InstanceTree } from '../engine/model/ObjectTree.js';
 import type { EntityRegistry } from '../engine/types/EntityRegistry.js';
 import type { EgressMapping, IngressMapping } from '../mapping/types.js';
-
-function readJsonFile(filePath: string): unknown {
-  try {
-    const text = readFileSync(filePath, 'utf8');
-    return JSON.parse(text) as unknown;
-  } catch (err) {
-    throw new ConfigError(`Failed to read mapping file '${filePath}': ${String(err)}`, err);
-  }
-}
 
 /** Extract static ingress target refs (skips locations with `{capture}` templates). */
 export function ingressMappingRefs(mapping: IngressMapping): MappingRef[] {
@@ -57,7 +46,7 @@ export function assertNoEgressGaps(mapper: EgressMapper, label: string): void {
 
 /**
  * Validate an ingress mapping file against the loaded instance tree.
- * @param mappingPath — absolute path to ingress JSON
+ * @param mappingPath — absolute path to ingress YAML
  * @param tree — loaded UCE tree
  * @param label — adapter id used in error messages (e.g. `mqtt-ingress`)
  */
@@ -66,11 +55,11 @@ export function validateIngressMapping(
   tree: InstanceTree,
   label: string,
 ): void {
-  const raw = readJsonFile(mappingPath);
   let mapping: IngressMapping;
   try {
-    mapping = IngressMappingSchema.parse(raw);
+    mapping = loadIngressMapping(mappingPath);
   } catch (err) {
+    if (err instanceof ConfigError) throw err;
     throw new ConfigError(
       `${label}: ingress mapping '${mappingPath}' failed schema validation: ${String(err)}`,
       err,
@@ -89,11 +78,11 @@ export function validateEgressMapping(
   entities: EntityRegistry,
   label: string,
 ): void {
-  const raw = readJsonFile(mappingPath);
   let mapping: EgressMapping;
   try {
-    mapping = EgressMappingSchema.parse(raw);
+    mapping = loadEgressMapping(mappingPath);
   } catch (err) {
+    if (err instanceof ConfigError) throw err;
     throw new ConfigError(
       `${label}: egress mapping '${mappingPath}' failed schema validation: ${String(err)}`,
       err,

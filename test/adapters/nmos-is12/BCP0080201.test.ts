@@ -70,7 +70,7 @@ describe('BCP-008-02 — NcSenderMonitor compliance', () => {
     const ctx: AdapterContext = {
       bus, tree, types: datatypes, entities,
       logger: makeLogger(),
-      config: { wsPort: port, host: '0.0.0.0', mapping: resolve(MAPPING_DIR, 'egress.is12.json') },
+      config: { wsPort: port, host: '0.0.0.0', mapping: resolve(MAPPING_DIR, 'egress.is12.yaml') },
     };
 
     adapter = new Is12EgressAdapter('is12-bcp0080201');
