@@ -1,9 +1,9 @@
 location: root
-entity_def: RootBlock
+entity_def: Block
 properties: []
 children:
   - location: receiver-monitors
-    entity_def: ReceiverMonitorsBlock
+    entity_def: Block
     properties: []
     children:
       - location: rx-monitor-01
@@ -33,7 +33,7 @@ children:
             value: true
         children: []
   - location: sender-monitors
-    entity_def: SenderMonitorsBlock
+    entity_def: Block
     properties: []
     children:
       - location: tx-monitor-01

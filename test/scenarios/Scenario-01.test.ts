@@ -10,8 +10,7 @@
  *
  * T6 (runbook README) is a documentation artefact — no automated test.
  * T7 (e2e bidirectional with mocked MQTT) is covered by the assertions in T3
- *    verifying write-back direction; a separate full e2e harness is a future
- *    enhancement once app.ts bootstrap is wired.
+ *    verifying write-back direction.
  */
 
 import { readFileSync } from 'node:fs';

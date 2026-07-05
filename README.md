@@ -147,7 +147,7 @@ test/                # Unit + integration tests (mirrors src/ layout)
 | Runtime / language       | Node.js 22+ LTS, TypeScript 5.x (strict, ESM) |
 | Ingress (Phase 1)        | `mqtt` (MQTT.js)                              |
 | Egress (Phase 1)         | `ws` (WebSocket)                              |
-| Schema validation        | `ajv` (JSON Schema) + `zod` (runtime guards)  |
+| Schema validation        | `zod` (bridge + model); `ajv` (adapter JSON Schemas) |
 | Config                   | `yaml`                                        |
 | Logging                  | `pino`                                        |
 | Testing                  | `vitest`                                      |

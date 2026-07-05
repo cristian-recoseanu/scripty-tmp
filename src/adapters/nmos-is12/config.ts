@@ -120,14 +120,6 @@ export const Is12AdapterConfigSchema = z.object({
    * @deprecated Use `is04.label` instead. Kept for back-compat.
    */
   instanceName: z.string().optional(),
-  /**
-   * @deprecated Use `is04.registration.*` instead. Kept for back-compat.
-   */
-  registry: z.object({
-    enabled: z.boolean().default(false),
-    address: z.string().optional(),
-    port: z.number().int().min(1).max(65535).default(80),
-  }).optional(),
 }).strict().superRefine((val, ctx) => {
   const reg = val.is04.registration;
   if (reg.enabled) {
@@ -207,16 +199,6 @@ export const IS12_CONFIG_JSON_SCHEMA: JSONSchema = {
     },
     mapping: { type: 'string', description: 'Resolved path to the egress mapping JSON file' },
     instanceName: { type: 'string', description: '@deprecated — use is04.label' },
-    registry: {
-      type: 'object',
-      description: '@deprecated — use is04.registration',
-      properties: {
-        enabled: { type: 'boolean', default: false },
-        address: { type: 'string' },
-        port: { type: 'integer', minimum: 1, maximum: 65535, default: 80 },
-      },
-      additionalProperties: false,
-    },
   },
   additionalProperties: false,
 };

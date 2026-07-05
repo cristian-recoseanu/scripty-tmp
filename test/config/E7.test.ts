@@ -1,7 +1,7 @@
 /**
  * E7 — Configuration Loading & Validation tests.
  * T1 — YAML loader + env interpolation
- * T2 — Master config JSON Schema (ajv)
+ * T2 — Master config validation (zod)
  * T3 — Model file loaders (entities + datatypes + tree)
  * T4 — Cross-validation at load time
  * T5 — Zod typed config
@@ -16,7 +16,6 @@ import { describe, it, expect } from 'vitest';
 import {
   ConfigError,
   interpolateEnv,
-  validateConfigSchema,
   loadBridgeConfig,
 } from '../../src/config/loader.js';
 import {
@@ -25,6 +24,7 @@ import {
   loadTree,
   crossValidateMappings,
 } from '../../src/config/modelLoader.js';
+import { BridgeConfigSchema } from '../../src/config/types.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -157,10 +157,10 @@ describe('E7.T1 — interpolateEnv', () => {
 });
 
 // ---------------------------------------------------------------------------
-// E7.T2 — validateConfigSchema (ajv) + loadBridgeConfig
+// E7.T2 — BridgeConfigSchema (zod) + loadBridgeConfig
 // ---------------------------------------------------------------------------
 
-describe('E7.T2 — validateConfigSchema', () => {
+describe('E7.T2 — BridgeConfigSchema', () => {
   it('accepts a valid config object', () => {
     const raw = {
       instance: { name: 'x' },
@@ -168,7 +168,7 @@ describe('E7.T2 — validateConfigSchema', () => {
       ingress: { id: 'i1', protocol: 'mqtt', config: {}, mapping: './m.json' },
       egress: [{ id: 'e1', protocol: 'is12', config: {}, mapping: './e.json' }],
     };
-    expect(() => validateConfigSchema(raw)).not.toThrow();
+    expect(BridgeConfigSchema.safeParse(raw).success).toBe(true);
   });
 
   it('rejects missing ingress', () => {
@@ -177,8 +177,10 @@ describe('E7.T2 — validateConfigSchema', () => {
       model: { entities: './e.yaml', datatypes: './d.yaml', tree: './t.yaml' },
       egress: [{ id: 'e1', protocol: 'is12', config: {}, mapping: './e.json' }],
     };
-    expect(() => validateConfigSchema(raw)).toThrowError(ConfigError);
-    expect(() => validateConfigSchema(raw)).toThrowError(/ingress/);
+    const result = BridgeConfigSchema.safeParse(raw);
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(result.error.issues.some((i) => i.path.join('.').includes('ingress'))).toBe(true);
   });
 
   it('rejects empty egress array', () => {
@@ -188,7 +190,7 @@ describe('E7.T2 — validateConfigSchema', () => {
       ingress: { id: 'i1', protocol: 'mqtt', config: {}, mapping: './m.json' },
       egress: [],
     };
-    expect(() => validateConfigSchema(raw)).toThrowError(ConfigError);
+    expect(BridgeConfigSchema.safeParse(raw).success).toBe(false);
   });
 
   it('rejects ingress as an array (must be object)', () => {
@@ -198,7 +200,7 @@ describe('E7.T2 — validateConfigSchema', () => {
       ingress: [{ id: 'i1', protocol: 'mqtt', config: {}, mapping: './m.json' }],
       egress: [{ id: 'e1', protocol: 'is12', config: {}, mapping: './e.json' }],
     };
-    expect(() => validateConfigSchema(raw)).toThrowError(ConfigError);
+    expect(BridgeConfigSchema.safeParse(raw).success).toBe(false);
   });
 
   it('rejects unknown additional top-level properties', () => {
@@ -209,7 +211,7 @@ describe('E7.T2 — validateConfigSchema', () => {
       egress: [{ id: 'e1', protocol: 'is12', config: {}, mapping: './e.json' }],
       routing: {},
     };
-    expect(() => validateConfigSchema(raw)).toThrowError(ConfigError);
+    expect(BridgeConfigSchema.safeParse(raw).success).toBe(false);
   });
 });
 
@@ -556,12 +558,8 @@ describe('E7 — coverage: resolveFromConfig', () => {
 
 describe('E7 — coverage: zod parse error path', () => {
   it('throws ConfigError wrapping a ZodError when zod rejects', async () => {
-    const { BridgeConfigSchema } = await import('../../src/config/types.js');
     const { ConfigError: CE } = await import('../../src/config/loader.js');
-    // Directly test that a ZodError is wrapped into ConfigError by loadBridgeConfig:
-    // the egress array has zero items — passes if we bypass ajv, fails zod min(1)
-    // The simplest trigger: an empty name that passes ajv (no minLength in schema for name... actually we have it)
-    // Instead, confirm BridgeConfigSchema produces ZodError for bad input
+    // Confirm BridgeConfigSchema produces ZodError for bad input
     try {
       BridgeConfigSchema.parse({
         instance: { name: 'x' },
@@ -712,8 +710,7 @@ children: []
 // ---------------------------------------------------------------------------
 
 describe('E7.T5 — zod schemas', () => {
-  it('BridgeConfigSchema rejects invalid logLevel', async () => {
-    const { BridgeConfigSchema } = await import('../../src/config/types.js');
+  it('BridgeConfigSchema rejects invalid logLevel', () => {
     const result = BridgeConfigSchema.safeParse({
       instance: { name: 'x', logLevel: 'verbose' },
       model: { entities: './e.yaml', datatypes: './d.yaml', tree: './t.yaml' },

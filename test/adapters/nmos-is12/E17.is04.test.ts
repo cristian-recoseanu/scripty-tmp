@@ -140,16 +140,23 @@ describe('E17.T1 — Is12AdapterConfigSchema with is04 block', () => {
     expect(result.success).toBe(false);
   });
 
-  it('preserves legacy instanceName and registry keys', () => {
+  it('preserves legacy instanceName key', () => {
     const result = Is12AdapterConfigSchema.safeParse({
       wsPort: 9001,
       instanceName: 'old-name',
-      registry: { enabled: false, address: 'reg.local', port: 3000 },
     });
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.instanceName).toBe('old-name');
     }
+  });
+
+  it('rejects deprecated top-level registry key', () => {
+    const result = Is12AdapterConfigSchema.safeParse({
+      wsPort: 9001,
+      registry: { enabled: false, address: 'reg.local', port: 3000 },
+    });
+    expect(result.success).toBe(false);
   });
 });
 

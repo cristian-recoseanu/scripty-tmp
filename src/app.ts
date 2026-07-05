@@ -1,7 +1,7 @@
 /**
  * E16.T8 — Bootstrap entry point.
  *
- * Load bridge config → build model → start engine → init/start adapters → handle shutdown.
+ * Load bridge config → build model → validate mappings → start engine → init/start adapters → handle shutdown.
  *
  * Usage:
  *   node dist/app.js <path-to-bridge.yaml>
@@ -17,6 +17,7 @@ import { Is12AdapterFactory } from './adapters/nmos-is12/Is12EgressAdapter.js';
 import { formatBuildInfo, loadBuildInfo } from './buildInfo.js';
 import { loadBridgeConfig, resolveFromConfig } from './config/loader.js';
 import { loadDatatypes, loadEntities, loadTree } from './config/modelLoader.js';
+import { validateEgressMapping, validateIngressMapping } from './config/validateMappings.js';
 import { UceBus } from './engine/bus/UceBus.js';
 import { UceEngine } from './engine/UceEngine.js';
 import { BridgeLogger } from './observability/BridgeLogger.js';
@@ -79,6 +80,21 @@ async function main(): Promise<void> {
     entities: entities.names().length,
     datatypes: datatypes.names().length,
   });
+
+  // 3b. Cross-validate mapping files against the model (E7.T4)
+  validateIngressMapping(
+    resolveFromConfig(configPath, cfg.ingress.mapping),
+    tree,
+    cfg.ingress.id,
+  );
+  for (const egress of cfg.egress) {
+    validateEgressMapping(
+      resolveFromConfig(configPath, egress.mapping),
+      tree,
+      entities,
+      egress.id,
+    );
+  }
 
   // 4. Engine
   const bus = new UceBus();

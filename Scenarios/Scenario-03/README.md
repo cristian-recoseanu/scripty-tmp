@@ -1,6 +1,6 @@
 # Scenario-03 — MQTT Per-Domain-Status → NcReceiverMonitor + NcSenderMonitor
 
-Extends Scenario-02 with **two intermediate blocks** and **per-domain-status MQTT topics**
+Extends Scenario-02 with an additional intermediate block and **per-domain-status MQTT topics**
 for both a **BCP-008-01 NcReceiverMonitor** and a **BCP-008-02 NcSenderMonitor**.
 `overallStatus` is **derived** from domain statuses (not MQTT-driven). IS-04 Node API is
 enabled for **node/device/controls** discovery (IS-12 WebSocket URI); registry registration
@@ -12,13 +12,16 @@ hosted on an **external** IS-04 node — this bridge only exposes their UUIDs on
 ## Device model topology
 
 ```
-root (NcBlock [1,1])
+root (NcBlock [1,1] — entity type Block)
 ├── DeviceManager / ClassManager
-├── receiver-monitors (NcBlock [1,1])
+├── receiver-monitors (NcBlock [1,1] — entity type Block)
 │     └── rx-monitor-01 (NcReceiverMonitor [1,2,2,1])
-└── sender-monitors (NcBlock [1,1])
+└── sender-monitors (NcBlock [1,1] — entity type Block)
       └── tx-monitor-01 (NcSenderMonitor [1,2,2,2])
 ```
+
+All block nodes share the same UCE entity type (`Block`); IS-12 member **roles** come from
+tree locations (`receiver-monitors`, `sender-monitors`, etc.), not from entity names.
 
 ---
 

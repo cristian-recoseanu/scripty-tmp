@@ -19,7 +19,6 @@ ingress:
         qos: 0
       - topicFilter: devices/device-01/senders/tx-1/#
         qos: 0
-    mapping: mapping/ingress.mqtt.json
 
 egress:
   - id: is12-egress
@@ -29,7 +28,6 @@ egress:
       wsPort: 9005
       host: "0.0.0.0"
       wsPath: "/x-nmos/ncp/v1.0"
-      instanceName: scenario-03
       is04:
         label: "Scenario-03 Protocol Bridge"
         description: "MQTT per-domain-status → IS-12 NcReceiverMonitor + NcSenderMonitor"

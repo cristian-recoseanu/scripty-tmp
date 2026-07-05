@@ -7,9 +7,6 @@ model:
   datatypes: model/datatypes.yaml
   tree: model/tree.yaml
 
-# The top-level `mapping` field on each adapter block is used by the bridge
-# loader for cross-validation. The MQTT adapter additionally reads `mapping`
-# from inside its own `config:` block (resolved relative to cwd).
 ingress:
   id: mqtt-ingress
   protocol: mqtt
@@ -20,7 +17,6 @@ ingress:
     subscriptions:
       - topicFilter: devices/device-01/label
         qos: 1
-    mapping: mapping/ingress.mqtt.json
 
 egress:
   - id: is12-egress
@@ -30,7 +26,6 @@ egress:
       wsPort: 9001
       host: "0.0.0.0"
       wsPath: "/x-nmos/ncp/v1.0"
-      instanceName: scenario-01
       is04:
         label: "Scenario-01 Protocol Bridge"
         description: "MQTT → IS-12 bridge for Scenario-01"

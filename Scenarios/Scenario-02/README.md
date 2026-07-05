@@ -11,13 +11,16 @@ instance (`classId [1,2,2,1]`) that lives inside an intermediate `NcBlock` named
 ## Device model topology
 
 ```
-root  (NcBlock [1,1], oid 1)
+root  (NcBlock [1,1], oid 1 — entity type Block)
 ├── DeviceManager  (NcDeviceManager [1,3,1], oid 2)
 ├── ClassManager   (NcClassManager  [1,3,2], oid 3)
-└── receiver-monitors  (NcBlock [1,1], oid 4)
+└── receiver-monitors  (NcBlock [1,1], oid 4 — entity type Block)
       └── rx-monitor-01  (NcReceiverMonitor [1,2,2,1], oid 5)
                linkStatus  → NcLinkStatus {level:4, index:1}  (read-only)
 ```
+
+Root and `receiver-monitors` share the same UCE entity type (`Block`); IS-12 member
+**roles** come from tree locations, not entity names.
 
 `NcLinkStatus` enum values:
 
@@ -56,7 +59,7 @@ this bridge does not advertise it on its own Node API.
 Scenarios/Scenario-02/
   bridge.yaml                   # master config
   model/
-    entities.yaml               # RootBlock, ReceiverMonitorsBlock, ReceiverMonitor
+    entities.yaml               # Block, ReceiverMonitor
     datatypes.yaml              # empty — no struct type_defs needed
     tree.yaml                   # root → receiver-monitors → rx-monitor-01 (linkStatus=1)
   mapping/
@@ -92,7 +95,7 @@ Expected startup output:
 
 ```
 {"level":"info","msg":"Protocol Bridge 'scenario-02' starting…"}
-{"level":"info","msg":"Model loaded","entities":3,"datatypes":0}
+{"level":"info","msg":"Model loaded","entities":2,"datatypes":0}
 {"level":"info","msg":"Adapter 'mqtt-ingress' (mqtt) started"}
 {"level":"info","msg":"Adapter 'is12-egress' (nmos-is12) started"}
 {"level":"info","msg":"All adapters started — bridge is running"}

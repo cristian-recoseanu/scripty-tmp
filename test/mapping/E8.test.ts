@@ -161,7 +161,7 @@ describe('E8.T1 — EgressMappingSchema validation', () => {
         {
           entityDef: 'Sensor',
           classId: [1, 2, 1],
-          properties: [{ id: 'temperature', targetId: { level: 3, index: 1 }, datatype: 'NcFloat64', observable: true }],
+          properties: [{ id: 'temperature', targetId: { level: 3, index: 1 }, datatype: 'NcFloat64' }],
           methods: [],
         },
       ],
@@ -171,6 +171,19 @@ describe('E8.T1 — EgressMappingSchema validation', () => {
 
   it('rejects empty classes array', () => {
     const result = EgressMappingSchema.safeParse({ version: 1, classes: [] });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects deprecated observable on property entries', () => {
+    const result = EgressMappingSchema.safeParse({
+      version: 1,
+      classes: [{
+        entityDef: 'Sensor',
+        classId: [1, 2, 1],
+        properties: [{ id: 'temperature', targetId: { level: 3, index: 1 }, observable: true }],
+        methods: [],
+      }],
+    });
     expect(result.success).toBe(false);
   });
 });

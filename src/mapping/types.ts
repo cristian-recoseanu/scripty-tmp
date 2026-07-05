@@ -194,7 +194,6 @@ export const EgressPropertyMappingSchema = z.object({
   /** Optional concrete numeric datatype name (e.g. "NcFloat64"). */
   datatype: z.string().optional(),
   readOnly: z.boolean().optional(),
-  observable: z.boolean().optional(),
 }).strict();
 
 export type EgressPropertyMapping = z.infer<typeof EgressPropertyMappingSchema>;
