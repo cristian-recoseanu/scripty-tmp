@@ -1,0 +1,32 @@
+instance:
+  name: scenario-04
+  logLevel: info
+
+model:
+  entities: model/entities.yaml
+  datatypes: model/datatypes.yaml
+  tree: model/tree.yaml
+
+ingress:
+  id: is12-ingress
+  protocol: nmos-is12
+  mapping: mapping/ingress.is12.yaml
+  config:
+    wsUrl: "${IS12_DEVICE_WS_URL:-ws://localhost:9001/x-nmos/ncp/v1.0}"
+    rootOid: 1
+    reconnectPeriodMs: 1000
+    reconnectMaxMs: 30000
+
+egress:
+  - id: mqtt-egress
+    protocol: mqtt
+    mapping: mapping/egress.mqtt.yaml
+    config:
+      url: "${MQTT_BROKER_URL:-mqtt://localhost:1883}"
+      clientId: scenario-04-bridge
+      subscriptions:
+        - topicFilter: bridge/root/userLabel/set
+          qos: 1
+      publish:
+        qos: 1
+        retain: true

@@ -97,11 +97,13 @@ export interface Adapter {
 export interface AdapterFactory {
   /** Protocol token this factory handles. */
   readonly protocol: string;
+  /** Adapter role this factory produces ('ingress' or 'egress'). */
+  readonly kind: 'ingress' | 'egress';
   /**
    * Create a new Adapter instance for the given instance config.
    *
    * @param id  — instance id from the bridge config.
-   * @param kind — 'ingress' | 'egress'.
+   * @param kind — 'ingress' | 'egress' (must match factory.kind).
    * @param config — raw config block (will be validated by the adapter via configSchema()).
    */
   create(id: string, kind: 'ingress' | 'egress', config: unknown): Adapter;

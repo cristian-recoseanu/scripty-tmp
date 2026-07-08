@@ -76,6 +76,25 @@ export class IngressMapper {
     this._logger = logger;
   }
 
+  /** Number of ingress/egress mapping rules. */
+  get ruleCount(): number {
+    return this._rules.length;
+  }
+
+  getRuleTarget(ruleIndex: number): IngressRule['target'] | undefined {
+    return this._rules[ruleIndex]?.target;
+  }
+
+  getRuleReverse(ruleIndex: number): IngressRule['reverse'] | undefined {
+    return this._rules[ruleIndex]?.reverse;
+  }
+
+  /** MQTT `match.topicFilter` for a rule (undefined when not a string). */
+  getRuleMatchTopicFilter(ruleIndex: number): string | undefined {
+    const filter = this._rules[ruleIndex]?.match.topicFilter;
+    return typeof filter === 'string' ? filter : undefined;
+  }
+
   // -------------------------------------------------------------------------
   // E8.T2 — map(): match topic → resolve node → decode → transform → MapOutcome
   // -------------------------------------------------------------------------

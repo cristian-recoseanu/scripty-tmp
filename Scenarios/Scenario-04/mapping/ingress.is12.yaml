@@ -1,0 +1,13 @@
+version: 1
+classes:
+  - entityDef: Block
+    classId:
+      - 1
+      - 1
+    properties:
+      - id: userLabel
+        targetId:
+          level: 1
+          index: 6
+        datatype: NcString
+    methods: []

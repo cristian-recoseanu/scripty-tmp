@@ -1,0 +1,16 @@
+version: 1
+rules:
+  - match:
+      topicFilter: bridge/root/userLabel/set
+    target:
+      location: root
+      property: userLabel
+      onUnresolved: warn
+    decode:
+      format: raw-string
+    transform: []
+    reverse:
+      topicTemplate: bridge/root/userLabel
+      writeStrategy: single
+      encode:
+        format: raw-string

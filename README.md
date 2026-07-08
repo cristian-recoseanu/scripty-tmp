@@ -74,6 +74,7 @@ The entry point is [`src/app.ts`](src/app.ts). Worked examples live under [`Scen
 | [Scenario-01](Scenarios/Scenario-01/README.md) | Minimal MQTT → IS-12 string mapping |
 | [Scenario-02](Scenarios/Scenario-02/README.md) | MQTT numeric → `NcReceiverMonitor` `linkStatus` |
 | [Scenario-03](Scenarios/Scenario-03/README.md) | Dual monitors, per-domain-status MQTT, derived `overallStatus` |
+| [Scenario-04](Scenarios/Scenario-04/README.md) | IS-12 ingress (client) → MQTT egress; bidirectional `userLabel` |
 
 Each scenario includes its own `bridge.yaml`, model, mappings, and runbook.
 
@@ -130,8 +131,8 @@ src/
     bus/             # UceBus + Operation definitions
     serialization/   # toJSON / snapshot / marshalling
   adapters/          # The only protocol-aware components
-    mqtt/            # Ingress example: MQTT
-    nmos-is12/       # Egress example: IS-12 / MS-05
+    mqtt/            # Ingress + egress: MQTT
+    nmos-is12/       # Ingress (client) + egress (device): IS-12 / MS-05
   mapping/           # Config-driven Ingress/Egress translation DSLs + transforms
   config/            # YAML config loading + schema validation
   observability/     # Structured logging, metrics, health

@@ -1,0 +1,8 @@
+entities:
+  - entity_name: Block
+    properties:
+      - id: userLabel
+        type: string
+        read_only: false
+        observable: true
+    methods: []
