@@ -362,6 +362,7 @@ export class MqttIngressAdapter implements Adapter {
 
 export const MqttAdapterFactory: AdapterFactory = {
   protocol: 'mqtt',
+  kind: 'ingress',
   create(id: string): Adapter {
     return new MqttIngressAdapter(id);
   },

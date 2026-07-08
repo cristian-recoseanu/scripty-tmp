@@ -104,11 +104,12 @@ function makeFakeAdapter(
 }
 
 /** Minimal AdapterFactory that creates makeFakeAdapter instances. */
-function makeFakeFactory(protocol = 'fake'): AdapterFactory {
+function makeFakeFactory(protocol = 'fake', kind: 'ingress' | 'egress' = 'ingress'): AdapterFactory {
   return {
     protocol,
-    create(id: string, kind: 'ingress' | 'egress'): Adapter {
-      return makeFakeAdapter(id, kind);
+    kind,
+    create(id: string, adapterKind: 'ingress' | 'egress'): Adapter {
+      return makeFakeAdapter(id, adapterKind);
     },
   };
 }
@@ -187,31 +188,41 @@ describe('E9.T2 — AdapterRegistry', () => {
   });
 
   it('registers a factory', () => {
-    registry.register(makeFakeFactory('mqtt'));
-    expect(registry.has('mqtt')).toBe(true);
+    registry.register(makeFakeFactory('mqtt', 'ingress'));
+    expect(registry.has('mqtt', 'ingress')).toBe(true);
   });
 
-  it('has() returns false for unregistered protocol', () => {
-    expect(registry.has('nmos-is12')).toBe(false);
+  it('has() returns false for unregistered protocol/kind pair', () => {
+    expect(registry.has('nmos-is12', 'egress')).toBe(false);
   });
 
   it('protocols() lists all registered tokens', () => {
-    registry.register(makeFakeFactory('mqtt'));
-    registry.register(makeFakeFactory('nmos-is12'));
+    registry.register(makeFakeFactory('mqtt', 'ingress'));
+    registry.register(makeFakeFactory('nmos-is12', 'egress'));
     expect(registry.protocols()).toContain('mqtt');
     expect(registry.protocols()).toContain('nmos-is12');
   });
 
   it('create() returns an Adapter instance', () => {
-    registry.register(makeFakeFactory('mqtt'));
+    registry.register(makeFakeFactory('mqtt', 'ingress'));
     const adapter = registry.create('ingress-1', 'ingress', 'mqtt', {});
     expect(adapter.id).toBe('ingress-1');
     expect(adapter.kind).toBe('ingress');
   });
 
-  it('create() allows two instances of the same protocol', () => {
+  it('create() allows ingress and egress factories for the same protocol', () => {
+    registry.register(makeFakeFactory('mqtt', 'ingress'));
+    registry.register(makeFakeFactory('mqtt', 'egress'));
+    const ingress = registry.create('mqtt-in', 'ingress', 'mqtt', {});
+    const egress = registry.create('mqtt-out', 'egress', 'mqtt', {});
+    expect(ingress.kind).toBe('ingress');
+    expect(egress.kind).toBe('egress');
+  });
+
+  it('create() allows two instances of the same protocol/kind', () => {
     const factory: AdapterFactory = {
       protocol: 'nmos-is12',
+      kind: 'egress',
       create(id, kind) {
         return makeFakeAdapter(id, kind);
       },
@@ -224,35 +235,30 @@ describe('E9.T2 — AdapterRegistry', () => {
     expect(a2.id).toBe('egress-2');
   });
 
-  it('create() throws AdapterRegistryError for unknown protocol', () => {
+  it('create() throws AdapterRegistryError for unknown protocol/kind pair', () => {
     expect(() => registry.create('x', 'egress', 'ghost', {})).toThrow(AdapterRegistryError);
   });
 
   it('error message names the missing protocol', () => {
-    registry.register(makeFakeFactory('mqtt'));
+    registry.register(makeFakeFactory('mqtt', 'ingress'));
     expect(() => registry.create('x', 'egress', 'ghost', {})).toThrow(/ghost/);
   });
 
-  it('error message lists known protocols', () => {
-    registry.register(makeFakeFactory('mqtt'));
+  it('error message lists known protocol/kind pairs', () => {
+    registry.register(makeFakeFactory('mqtt', 'ingress'));
     let msg = '';
     try {
       registry.create('x', 'egress', 'ghost', {});
     } catch (e) {
       msg = e instanceof Error ? e.message : '';
     }
-    expect(msg).toMatch(/mqtt/);
+    expect(msg).toMatch(/mqtt:ingress/);
   });
 
-  it('registering same protocol twice replaces the factory', () => {
-    const f1 = makeFakeFactory('mqtt');
-    const f2: AdapterFactory = {
-      protocol: 'mqtt',
-      create(id, kind) { return makeFakeAdapter(id, kind); },
-    };
-    registry.register(f1);
-    registry.register(f2);
-    expect(registry.protocols().filter((p) => p === 'mqtt')).toHaveLength(1);
+  it('registering same protocol/kind twice replaces the factory', () => {
+    registry.register(makeFakeFactory('mqtt', 'ingress'));
+    registry.register(makeFakeFactory('mqtt', 'ingress'));
+    expect(registry.entries().filter((e) => e.protocol === 'mqtt' && e.kind === 'ingress')).toHaveLength(1);
   });
 });
 

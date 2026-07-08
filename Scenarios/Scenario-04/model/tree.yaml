@@ -1,0 +1,6 @@
+location: root
+entity_def: Block
+properties:
+  - id: userLabel
+    value: "initial-label"
+children: []

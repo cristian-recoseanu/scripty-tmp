@@ -12,12 +12,14 @@
 import { dirname, resolve } from 'node:path';
 
 import { AdapterRegistry } from './adapters/AdapterRegistry.js';
+import { MqttEgressAdapterFactory } from './adapters/mqtt/MqttEgressAdapter.js';
 import { MqttAdapterFactory } from './adapters/mqtt/MqttIngressAdapter.js';
 import { Is12AdapterFactory } from './adapters/nmos-is12/Is12EgressAdapter.js';
+import { Is12IngressAdapterFactory } from './adapters/nmos-is12/Is12IngressAdapter.js';
 import { formatBuildInfo, loadBuildInfo } from './buildInfo.js';
 import { loadBridgeConfig, resolveFromConfig } from './config/loader.js';
 import { loadDatatypes, loadEntities, loadTree } from './config/modelLoader.js';
-import { validateEgressMapping, validateIngressMapping } from './config/validateMappings.js';
+import { validateAdapterMapping } from './config/validateMappings.js';
 import { UceBus } from './engine/bus/UceBus.js';
 import { UceEngine } from './engine/UceEngine.js';
 import { BridgeLogger } from './observability/BridgeLogger.js';
@@ -81,14 +83,19 @@ async function main(): Promise<void> {
     datatypes: datatypes.names().length,
   });
 
-  // 3b. Cross-validate mapping files against the model (E7.T4)
-  validateIngressMapping(
+  // 3b. Cross-validate mapping files against the model (E7.T4 / E21.T1)
+  validateAdapterMapping(
+    cfg.ingress.protocol,
+    'ingress',
     resolveFromConfig(configPath, cfg.ingress.mapping),
     tree,
+    entities,
     cfg.ingress.id,
   );
   for (const egress of cfg.egress) {
-    validateEgressMapping(
+    validateAdapterMapping(
+      egress.protocol,
+      'egress',
       resolveFromConfig(configPath, egress.mapping),
       tree,
       entities,
@@ -104,7 +111,9 @@ async function main(): Promise<void> {
   // 5. Resolve adapter instances from registry
   const adapterRegistry = new AdapterRegistry();
   adapterRegistry.register(MqttAdapterFactory);
+  adapterRegistry.register(MqttEgressAdapterFactory);
   adapterRegistry.register(Is12AdapterFactory);
+  adapterRegistry.register(Is12IngressAdapterFactory);
 
   const adapterSpecs: { adapter: Adapter; config: Record<string, unknown> }[] = [
     {

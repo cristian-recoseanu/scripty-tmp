@@ -886,6 +886,7 @@ export class Is12EgressAdapter implements Adapter {
 
 export const Is12AdapterFactory: AdapterFactory = {
   protocol: 'nmos-is12',
+  kind: 'egress',
   create(id: string): Adapter {
     return new Is12EgressAdapter(id);
   },

@@ -30,6 +30,9 @@ yarn-error.log*
 # Vitest cache
 .vitest/
 
+# E2E test fixtures (written at runtime, not part of scenario artefacts)
+**/.upstream-fixture/
+
 # OS files
 .DS_Store
 Thumbs.db
