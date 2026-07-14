@@ -4,6 +4,12 @@ classes:
     classId:
       - 1
       - 1
+    properties: []
+    methods: []
+  - entityDef: EgressBlock
+    classId:
+      - 1
+      - 1
     properties:
       - id: userLabel
         targetId:
@@ -11,6 +17,3 @@ classes:
           index: 6
         datatype: NcString
     methods: []
-instances:
-  - location: root
-    rolePath: .

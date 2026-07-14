@@ -173,6 +173,12 @@ export const EgressInstanceMappingSchema = z.object({
   /** Full tree path of the node (slash-separated location chain). */
   location: z.string().min(1),
   /**
+   * Remote IS-12 role path for this UCE location (ingress client role).
+   * Slash-separated roles relative to root, e.g. `receivers` or `stereo-gain/channel-gain`.
+   * Resolved to a runtime oid via FindMembersByPath at connect.
+   */
+  rolePath: z.string().min(1).optional(),
+  /**
    * Static NcTouchpoints exposed on 1p7 for this node.
    * For NcReceiverMonitor nodes: MUST contain exactly one NcTouchpointNmos with
    * resourceType "receiver" and the associated IS-04 receiver UUID.

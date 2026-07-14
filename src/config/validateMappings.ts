@@ -97,6 +97,37 @@ export function validateIs12IngressMapping(
     );
   }
   crossValidateMappings(is12IngressMappingRefs(mapping, tree), tree, label);
+  validateIs12IngressRolePaths(mapping, tree, label);
+}
+
+/** Every ingress-mapped UCE node with properties must declare instances.rolePath. */
+export function validateIs12IngressRolePaths(
+  mapping: EgressMapping,
+  tree: InstanceTree,
+  label: string,
+): void {
+  const instanceByLocation = new Map((mapping.instances ?? []).map((i) => [i.location, i]));
+  const classByEntity = new Map(mapping.classes.map((c) => [c.entityDef, c]));
+
+  const walk = (nodeId: string): void => {
+    const lookup = tree.findById(nodeId);
+    if (!lookup.ok) return;
+    const cls = classByEntity.get(lookup.node.identity.entity_def);
+    if (cls !== undefined && cls.properties.length > 0) {
+      const inst = instanceByLocation.get(nodeId);
+      if (inst?.rolePath === undefined || inst.rolePath.length === 0) {
+        throw new ConfigError(
+          `${label}: IS-12 ingress mapping missing instances.rolePath for UCE node '${nodeId}'`,
+        );
+      }
+    }
+    for (const child of lookup.node.children.values()) {
+      walk(child.identity.path);
+    }
+  };
+
+  const root = tree.root;
+  if (root !== undefined) walk(root.identity.path);
 }
 
 /** Extract egress per-instance tree paths (e.g. touchpoint bindings). */

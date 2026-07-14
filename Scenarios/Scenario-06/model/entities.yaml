@@ -1,0 +1,28 @@
+entities:
+  - entity_name: Block
+    properties: []
+    methods: []
+  - entity_name: ReceiversBlock
+    properties:
+      - id: userLabel
+        type: string
+        read_only: false
+        observable: true
+        nullable: false
+    methods: []
+  - entity_name: EgressBlock
+    properties:
+      - id: userLabel
+        type: string
+        read_only: false
+        observable: true
+        nullable: false
+    methods: []
+  - entity_name: Relay
+    properties:
+      - id: value
+        type: string
+        read_only: false
+        observable: true
+        nullable: false
+    methods: []

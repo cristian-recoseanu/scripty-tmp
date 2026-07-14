@@ -151,8 +151,25 @@ describe('E21 — validateIs12IngressMapping', () => {
         properties: [{ id: 'userLabel', targetId: { level: 1, index: 6 } }],
         methods: [],
       }],
+      instances: [{ location: 'root', rolePath: '.' }],
     }));
     expect(() => validateIs12IngressMapping(path, makeTree(), 'test')).not.toThrow();
+  });
+
+  it('rejects mapping without instances.rolePath on mapped nodes', () => {
+    const dir = join(tmpdir(), `e21-rp-${Date.now()}`);
+    mkdirSync(dir, { recursive: true });
+    const path = join(dir, 'ingress.is12.yaml');
+    writeFileSync(path, stringify({
+      version: 1,
+      classes: [{
+        entityDef: 'Block',
+        classId: [1, 1],
+        properties: [{ id: 'userLabel', targetId: { level: 1, index: 6 } }],
+        methods: [],
+      }],
+    }));
+    expect(() => validateIs12IngressMapping(path, makeTree(), 'test')).toThrow(/rolePath/);
   });
 
   it('rejects mapping referencing unknown property', () => {
@@ -228,6 +245,7 @@ describe('E21 — validateAdapterMapping dispatch', () => {
         properties: [{ id: 'userLabel', targetId: { level: 1, index: 6 } }],
         methods: [],
       }],
+      instances: [{ location: 'root', rolePath: '.' }],
     }));
     expect(() => validateAdapterMapping('nmos-is12', 'ingress', path, makeTree(), makeEntities(), 'test'))
       .not.toThrow();

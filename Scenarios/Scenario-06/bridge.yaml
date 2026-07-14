@@ -1,0 +1,46 @@
+instance:
+  name: scenario-06
+  logLevel: info
+
+model:
+  entities: model/entities.yaml
+  datatypes: model/datatypes.yaml
+  tree: model/tree.yaml
+
+# Mirror ingress-side and egress-side userLabel values through the UCE.
+relays:
+  - from: { location: root/receivers-block, property: userLabel }
+    to: { location: root/egress-block, property: userLabel }
+    bidirectional: true
+
+ingress:
+  id: is12-ingress
+  protocol: nmos-is12
+  mapping: mapping/ingress.is12.yaml
+  config:
+    wsUrl: "${IS12_REMOTE_WS_URL:-ws://localhost:9001/x-nmos/ncp/v1.0}"
+    rootOid: 1
+    reconnectPeriodMs: 1000
+    reconnectMaxMs: 30000
+
+egress:
+  - id: is12-egress
+    protocol: nmos-is12
+    mapping: mapping/egress.is12.yaml
+    config:
+      # When is04.nodeApi.enabled is true the IS-04 HTTP server and the IS-12
+      # WebSocket share a single port (httpPort below). wsPort is only used in
+      # standalone mode (is04.nodeApi.enabled: false).
+      wsPort: 9002
+      host: "0.0.0.0"
+      wsPath: "/x-nmos/ncp/v1.0"
+      is04:
+        label: "Scenario-06 Protocol Bridge"
+        description: "IS-12 ingress → IS-12 egress bidirectional block sync"
+        nodeApi:
+          enabled: true
+          httpPort: 9002
+          host: "0.0.0.0"
+          advertiseHost: "localhost"
+        registration:
+          enabled: false
