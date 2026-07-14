@@ -75,6 +75,8 @@ The entry point is [`src/app.ts`](src/app.ts). Worked examples live under [`Scen
 | [Scenario-02](Scenarios/Scenario-02/README.md) | MQTT numeric → `NcReceiverMonitor` `linkStatus` |
 | [Scenario-03](Scenarios/Scenario-03/README.md) | Dual monitors, per-domain-status MQTT, derived `overallStatus` |
 | [Scenario-04](Scenarios/Scenario-04/README.md) | IS-12 ingress (client) → MQTT egress; bidirectional `userLabel` |
+| [Scenario-05](Scenarios/Scenario-05/README.md) | MQTT ↔ MQTT bidirectional topic relay (independent source/dest broker connections) |
+| [Scenario-06](Scenarios/Scenario-06/README.md) | IS-12 ingress (client) → IS-12 egress; remote `ingress` ↔ local `egress` block `userLabel` sync |
 
 Each scenario includes its own `bridge.yaml`, model, mappings, and runbook.
 

@@ -185,6 +185,21 @@ const EgressSchema = z
   })
   .strict();
 
+const PropertyRefSchema = z
+  .object({
+    location: z.string().min(1),
+    property: z.string().min(1),
+  })
+  .strict();
+
+const PropertyRelaySchema = z
+  .object({
+    from: PropertyRefSchema,
+    to: PropertyRefSchema,
+    bidirectional: z.boolean().default(true),
+  })
+  .strict();
+
 export const BridgeConfigSchema = z
   .object({
     instance: InstanceSchema,
@@ -193,6 +208,8 @@ export const BridgeConfigSchema = z
     ingress: IngressSchema,
     /** One or more egress endpoints. */
     egress: z.array(EgressSchema).min(1),
+    /** Optional UCE property mirrors (E22 Scenario-06). */
+    relays: z.array(PropertyRelaySchema).optional(),
   })
   .strict();
 

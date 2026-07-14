@@ -1,0 +1,6 @@
+location: root
+entity_def: Relay
+properties:
+  - id: value
+    value: ""
+children: []

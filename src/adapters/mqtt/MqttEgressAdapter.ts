@@ -250,6 +250,13 @@ export class MqttEgressAdapter implements Adapter {
       changeType: 'valueChanged',
       value: outcome.value,
     });
+
+    // Split-topic pattern: after an inbound set-topic write, publish the state topic
+    // (reverse descriptor) so retained state reflects the new value.
+    const found = this._mapper.findRuleForTarget(outcome.nodeId, outcome.property);
+    if (found !== undefined && this._mapper.getRuleReverse(found.ruleIndex) !== undefined) {
+      this._publishForRule(found.ruleIndex, found.captures, outcome.value, outcome.nodeId, outcome.property);
+    }
   }
 
   private _registerEcho(nodeId: string, property: string, value: ModelValue): void {

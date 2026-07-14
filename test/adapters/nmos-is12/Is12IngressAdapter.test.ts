@@ -39,6 +39,7 @@ function writeMapping(dir: string, readOnly = false): string {
       properties: [{ id: 'userLabel', targetId: { level: 1, index: 6 }, readOnly }],
       methods: [],
     }],
+    instances: [{ location: 'root', rolePath: '.' }],
   }));
   return path;
 }

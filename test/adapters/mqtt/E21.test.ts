@@ -135,6 +135,14 @@ describe('E21 — MqttEgressAdapter', () => {
     expect(received.some((o) => o.origin === 'mqtt-out' && o.value === 'from-set')).toBe(true);
   });
 
+  it('publishes state topic after inbound set-topic write (split-topic pattern)', () => {
+    fake.published.length = 0;
+    fake._emit('message', 'bridge/root/userLabel/set', Buffer.from('from-set'));
+    const statePub = fake.published.find((p) => p.topic === 'bridge/root/userLabel');
+    expect(statePub?.payload).toBe('from-set');
+    expect((statePub?.opts as { retain?: boolean })?.retain).toBe(true);
+  });
+
   it('suppresses echo when set-topic repeats a value just written', () => {
     const received: PropertyChangedOp[] = [];
     bus.subscribe({ op: 'propertyChanged' }, (op) => received.push(op as PropertyChangedOp));

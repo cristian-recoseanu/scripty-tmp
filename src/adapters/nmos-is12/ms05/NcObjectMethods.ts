@@ -349,21 +349,32 @@ function setStandardProperty(ctx: DispatchContext, propId: { level: number; inde
         changeType: 'valueChanged',
         value,
       }));
-      // Also propagate as setProperty to tree for MQTT write-back (tree-backed oids only).
+      // Also propagate as setProperty to the UCE tree for write-back (relays, MQTT, etc.).
       const path = ctx.identityRegistry.pathForOid(ctx.oid);
       if (path !== undefined) {
-        let treePropName: string | undefined;
-        for (let i = 1; i <= 32 && treePropName === undefined; i++) {
-          treePropName = ctx.propMap.resolvePropertyName(ctx.oid, 3, i);
-        }
-        if (treePropName !== undefined) {
+        const lookup = ctx.tree.findById(path);
+        if (lookup.ok && lookup.node.properties.has('userLabel')) {
           ctx.bus.publish(makeSetPropertyOp({
             origin: ctx.adapterId,
             correlationId: ctx.correlationId,
             nodeId: path,
-            property: treePropName,
+            property: 'userLabel',
             value,
           }));
+        } else {
+          let treePropName: string | undefined;
+          for (let i = 1; i <= 32 && treePropName === undefined; i++) {
+            treePropName = ctx.propMap.resolvePropertyName(ctx.oid, 3, i);
+          }
+          if (treePropName !== undefined) {
+            ctx.bus.publish(makeSetPropertyOp({
+              origin: ctx.adapterId,
+              correlationId: ctx.correlationId,
+              nodeId: path,
+              property: treePropName,
+              value,
+            }));
+          }
         }
       }
       return okVoid();

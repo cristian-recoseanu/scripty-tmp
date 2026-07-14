@@ -21,6 +21,7 @@ import { loadBridgeConfig, resolveFromConfig } from './config/loader.js';
 import { loadDatatypes, loadEntities, loadTree } from './config/modelLoader.js';
 import { validateAdapterMapping } from './config/validateMappings.js';
 import { UceBus } from './engine/bus/UceBus.js';
+import { wirePropertyRelays } from './engine/propertyRelay.js';
 import { UceEngine } from './engine/UceEngine.js';
 import { BridgeLogger } from './observability/BridgeLogger.js';
 
@@ -108,6 +109,11 @@ async function main(): Promise<void> {
   const engine = new UceEngine({ tree, bus });
   engine.start();
 
+  let unwireRelays: (() => void) | undefined;
+  if (cfg.relays !== undefined && cfg.relays.length > 0) {
+    unwireRelays = wirePropertyRelays(bus, engine, cfg.relays);
+  }
+
   // 5. Resolve adapter instances from registry
   const adapterRegistry = new AdapterRegistry();
   adapterRegistry.register(MqttAdapterFactory);
@@ -150,6 +156,7 @@ async function main(): Promise<void> {
         try { await a.stop(); } catch { /* best-effort rollback */ }
       }
       engine.stop();
+      unwireRelays?.();
       throw err;
     }
   }
@@ -167,6 +174,7 @@ async function main(): Promise<void> {
         logger.error(`Adapter '${a.id}' stop error: ${String(err)}`);
       }
     }
+    unwireRelays?.();
     engine.stop();
     logger.info('Bridge stopped');
     process.exit(0);

@@ -1,5 +1,8 @@
 /**
  * E21.T4 — Maps IS-12 ingress class-projection mapping ↔ UCE tree locations.
+ *
+ * Remote wire targets are identified by **role path** (resolved to runtime oids at
+ * connect). Mapping files must not pin oids.
  */
 
 import { EgressMapper } from '../../mapping/EgressMapper.js';
@@ -13,11 +16,15 @@ export interface Is12IngressMappedProperty {
   readonly property: string;
   readonly propertyId: { level: number; index: number };
   readonly readOnly: boolean;
-  readonly oid: number;
+  readonly rolePath: string;
+  /** Populated after role-path resolution at connect. */
+  oid?: number;
 }
 
 export class Is12IngressMapper {
   private readonly _mapper: EgressMapper;
+  private readonly _rolePathByLocation = new Map<string, string>();
+  private readonly _static: Is12IngressMappedProperty[] = [];
   private readonly _entries: Is12IngressMappedProperty[] = [];
   private readonly _byWire = new Map<string, { nodeId: string; property: string }>();
   private readonly _byUce = new Map<string, Is12IngressMappedProperty>();
@@ -26,19 +33,45 @@ export class Is12IngressMapper {
     mapping: EgressMapping,
     tree: InstanceTree,
     entities: EntityRegistry,
-    rootOid: number,
   ) {
     this._mapper = new EgressMapper(mapping, entities);
-    this._build(tree, rootOid);
+    for (const inst of mapping.instances ?? []) {
+      if (inst.rolePath !== undefined) {
+        this._rolePathByLocation.set(inst.location, inst.rolePath);
+      }
+    }
+    this._build(tree);
   }
 
   mappedProperties(): readonly Is12IngressMappedProperty[] {
     return this._entries;
   }
 
+  rolePaths(): string[] {
+    return [...new Set(this._static.map((e) => e.rolePath))];
+  }
+
   subscriptionOids(): number[] {
-    const oids = new Set(this._entries.map((e) => e.oid));
+    const oids = new Set(
+      this._entries.map((e) => e.oid).filter((o): o is number => o !== undefined),
+    );
     return Array.from(oids);
+  }
+
+  /** Bind runtime oids resolved from role paths (after connect / reconnect). */
+  bindOids(resolved: ReadonlyMap<string, number>): void {
+    this._byWire.clear();
+    this._byUce.clear();
+    this._entries.length = 0;
+
+    for (const entry of this._static) {
+      const oid = resolved.get(entry.rolePath);
+      if (oid === undefined) continue;
+      const bound: Is12IngressMappedProperty = { ...entry, oid };
+      this._entries.push(bound);
+      this._byWire.set(this._wireKey(oid, bound.propertyId), { nodeId: bound.nodeId, property: bound.property });
+      this._byUce.set(`${bound.nodeId}:${bound.property}`, bound);
+    }
   }
 
   resolveFromWire(
@@ -55,40 +88,37 @@ export class Is12IngressMapper {
     return this._byUce.get(`${nodeId}:${property}`);
   }
 
-  private _build(tree: InstanceTree, rootOid: number): void {
-    const walk = (nodeId: string, oid: number): void => {
+  private _build(tree: InstanceTree): void {
+    const walk = (nodeId: string): void => {
       const lookup = tree.findById(nodeId);
       if (!lookup.ok) return;
 
+      const rolePath = this._rolePathByLocation.get(nodeId);
       const entityDef = lookup.node.identity.entity_def;
       const cls = this._mapper.getClass(entityDef);
-      if (cls !== undefined) {
+
+      if (cls !== undefined && rolePath !== undefined) {
         for (const [propName, entry] of cls.properties) {
           const tid = entry.targetId as { level: number; index: number } | undefined;
           if (tid === undefined) continue;
-          const mapped: Is12IngressMappedProperty = {
+          this._static.push({
             nodeId,
             property: propName,
             propertyId: tid,
             readOnly: entry.readOnly ?? false,
-            oid,
-          };
-          this._entries.push(mapped);
-          this._byWire.set(this._wireKey(oid, tid), { nodeId, property: propName });
-          this._byUce.set(`${nodeId}:${propName}`, mapped);
+            rolePath,
+          });
         }
       }
 
-      let childIndex = 0;
       for (const child of lookup.node.children.values()) {
-        childIndex += 1;
-        walk(child.identity.path, oid + childIndex);
+        walk(child.identity.path);
       }
     };
 
     const root = tree.root;
     if (root !== undefined) {
-      walk(root.identity.path, rootOid);
+      walk(root.identity.path);
     }
   }
 

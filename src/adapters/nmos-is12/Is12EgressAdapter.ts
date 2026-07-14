@@ -684,8 +684,8 @@ export class Is12EgressAdapter implements Adapter {
           session.userLabels.set(oid, op.value);
         }
         this._emitNotification(oid, { level: 1, index: 6 }, op.value);
+        return;
       }
-      return;
     }
 
     const oid = this._getOidForNode(op.nodeId);

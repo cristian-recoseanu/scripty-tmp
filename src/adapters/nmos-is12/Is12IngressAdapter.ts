@@ -13,6 +13,7 @@ import { loadEgressMapping } from '../../mapping/loadMapping.js';
 import { IS12_INGRESS_CONFIG_JSON_SCHEMA, Is12IngressConfigSchema } from './ingressConfig.js';
 import { Is12IngressClient } from './Is12IngressClient.js';
 import { Is12IngressMapper } from './Is12IngressMapper.js';
+import { resolveRolePaths } from './Is12RolePathResolver.js';
 import { NC_OBJECT_METHOD } from './ms05/NcObjectMethods.js';
 import { IS12MessageType, NcMethodStatus } from './ms05/types.js';
 
@@ -68,7 +69,6 @@ export class Is12IngressAdapter implements Adapter {
         mapping,
         ctx.tree,
         ctx.entities,
-        parsed.data.rootOid,
       );
     } catch (err) {
       return Promise.reject(err instanceof Error ? err : new Error(String(err)));
@@ -140,6 +140,16 @@ export class Is12IngressAdapter implements Adapter {
       });
       this._client = client;
 
+      const rolePaths = mapper.rolePaths();
+      const resolved = await resolveRolePaths(client, cfg.rootOid, rolePaths);
+      if (resolved.size < rolePaths.length) {
+        const missing = rolePaths.filter((p) => !resolved.has(p));
+        throw new Error(
+          `Is12IngressAdapter '${this.id}': failed to resolve role path(s): ${missing.join(', ')}`,
+        );
+      }
+      mapper.bindOids(resolved);
+
       const oids = mapper.subscriptionOids();
       if (oids.length > 0) {
         await client.subscribe(oids);
@@ -181,6 +191,7 @@ export class Is12IngressAdapter implements Adapter {
     mapper: Is12IngressMapper,
   ): Promise<void> {
     for (const entry of mapper.mappedProperties()) {
+      if (entry.oid === undefined) continue;
       try {
         const resp = await client.command({
           oid: entry.oid,
@@ -237,7 +248,7 @@ export class Is12IngressAdapter implements Adapter {
     if (this._client === null || this._mapper === null || !this._client.connected) return;
 
     const entry = this._mapper.resolveToWire(op.nodeId, op.property);
-    if (entry === undefined || entry.readOnly) return;
+    if (entry === undefined || entry.readOnly || entry.oid === undefined) return;
 
     try {
       const resp = await this._client.command({

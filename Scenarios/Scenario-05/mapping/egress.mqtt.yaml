@@ -1,0 +1,16 @@
+version: 1
+rules:
+  - match:
+      topicFilter: plant/dest/value/set
+    target:
+      location: root
+      property: value
+      onUnresolved: warn
+    decode:
+      format: raw-string
+    transform: []
+    reverse:
+      topicTemplate: plant/dest/value
+      writeStrategy: single
+      encode:
+        format: raw-string

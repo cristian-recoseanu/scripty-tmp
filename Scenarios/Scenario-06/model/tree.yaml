@@ -1,0 +1,16 @@
+location: root
+entity_def: Block
+properties: []
+children:
+  - location: receivers-block
+    entity_def: ReceiversBlock
+    properties:
+      - id: userLabel
+        value: "receivers-side"
+    children: []
+  - location: egress-block
+    entity_def: EgressBlock
+    properties:
+      - id: userLabel
+        value: "egress-side"
+    children: []

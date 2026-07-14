@@ -1,0 +1,10 @@
+location: root
+entity_def: Block
+properties: []
+children:
+  - location: receivers
+    entity_def: ReceiversBlock
+    properties:
+      - id: userLabel
+        value: "remote-initial"
+    children: []

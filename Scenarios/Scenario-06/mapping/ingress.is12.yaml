@@ -1,6 +1,6 @@
 version: 1
 classes:
-  - entityDef: Block
+  - entityDef: ReceiversBlock
     classId:
       - 1
       - 1
@@ -12,5 +12,5 @@ classes:
         datatype: NcString
     methods: []
 instances:
-  - location: root
-    rolePath: .
+  - location: root/receivers-block
+    rolePath: receivers

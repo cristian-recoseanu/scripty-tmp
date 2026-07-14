@@ -1,0 +1,36 @@
+instance:
+  name: scenario-05
+  logLevel: info
+
+model:
+  entities: model/entities.yaml
+  datatypes: model/datatypes.yaml
+  tree: model/tree.yaml
+
+# MQTT source broker — ingress subscribes here.
+ingress:
+  id: mqtt-ingress
+  protocol: mqtt
+  mapping: mapping/ingress.mqtt.yaml
+  config:
+    url: "${MQTT_SOURCE_BROKER_URL:-mqtt://localhost:1883}"
+    clientId: scenario-05-ingress
+    subscriptions:
+      - topicFilter: plant/source/value
+        qos: 1
+
+# MQTT destination broker — egress publishes state and accepts set-topic writes.
+# Set MQTT_DEST_BROKER_URL to the same host as source for single-broker operation.
+egress:
+  - id: mqtt-egress
+    protocol: mqtt
+    mapping: mapping/egress.mqtt.yaml
+    config:
+      url: "${MQTT_DEST_BROKER_URL:-mqtt://localhost:1884}"
+      clientId: scenario-05-egress
+      subscriptions:
+        - topicFilter: plant/dest/value/set
+          qos: 1
+      publish:
+        qos: 1
+        retain: true
