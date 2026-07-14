@@ -6,8 +6,9 @@ A configurable **Node.js + TypeScript** framework for mapping data between proto
 from one or more **Ingress** adapters, normalises updates into a **protocol-neutral internal model**,
 and re-emits them through one or more **Egress** adapters.
 
-> **Phase 1** uses **MQTT** as the example Ingress and **NMOS IS-12 / MS-05** as the example Egress —
-> but these are configuration only. The core knows nothing about any specific protocol.
+> **Phase 1** ships **MQTT** and **NMOS IS-12 / MS-05** in **both** ingress and egress roles
+> (MQTT↔MQTT relay, IS-12 client↔local device, MQTT↔IS-12 cross-protocol, and combinations with
+> fan-out). Adapter choice is configuration only — the core knows nothing about any specific protocol.
 
 ---
 
@@ -76,7 +77,7 @@ The entry point is [`src/app.ts`](src/app.ts). Worked examples live under [`Scen
 | [Scenario-03](Scenarios/Scenario-03/README.md) | Dual monitors, per-domain-status MQTT, derived `overallStatus` |
 | [Scenario-04](Scenarios/Scenario-04/README.md) | IS-12 ingress (client) → MQTT egress; bidirectional `userLabel` |
 | [Scenario-05](Scenarios/Scenario-05/README.md) | MQTT ↔ MQTT bidirectional topic relay (independent source/dest broker connections) |
-| [Scenario-06](Scenarios/Scenario-06/README.md) | IS-12 ingress (client) → IS-12 egress; remote `ingress` ↔ local `egress` block `userLabel` sync |
+| [Scenario-06](Scenarios/Scenario-06/README.md) | IS-12 ingress (client) → IS-12 egress; remote `receivers` ↔ local `egress` block `userLabel` sync |
 
 Each scenario includes its own `bridge.yaml`, model, mappings, and runbook.
 
@@ -132,6 +133,7 @@ src/
     model/           # ObjectNode, ObjectTree, descriptors
     bus/             # UceBus + Operation definitions
     serialization/   # toJSON / snapshot / marshalling
+    propertyRelay.ts # Optional UCE property mirroring (bridge.yaml relays)
   adapters/          # The only protocol-aware components
     mqtt/            # Ingress + egress: MQTT
     nmos-is12/       # Ingress (client) + egress (device): IS-12 / MS-05
@@ -145,14 +147,18 @@ test/                # Unit + integration tests (mirrors src/ layout)
 
 ## Technology stack
 
-| Concern                  | Choice                                        |
-| ------------------------ | --------------------------------------------- |
-| Runtime / language       | Node.js 22+ LTS, TypeScript 5.x (strict, ESM) |
-| Ingress (Phase 1)        | `mqtt` (MQTT.js)                              |
-| Egress (Phase 1)         | `ws` (WebSocket)                              |
-| Schema validation        | `zod` (bridge + model); `ajv` (adapter JSON Schemas) |
-| Config                   | `yaml`                                        |
-| Logging                  | `pino`                                        |
-| Testing                  | `vitest`                                      |
-| Lint / format            | `eslint` + `prettier`                         |
-| Architecture enforcement | `dependency-cruiser`                          |
+| Concern | Choice |
+| ------- | ------ |
+| Runtime / language | Node.js 22+ LTS, TypeScript 6.x (strict, ESM) |
+| MQTT (`mqtt`) | Ingress and egress — subscribe, publish, write-back |
+| IS-12 / MS-05 (`ws`) | Ingress client (NCP controller) and egress device (NCP server) |
+| IS-04 Node API | Optional on IS-12 egress — Node.js `http` + shared WebSocket port |
+| Schema validation | `zod` (bridge, model, adapter config at runtime) |
+| Wire-schema tests | `ajv` (IS-12 JSON Schema compliance in test suite) |
+| Config | `yaml` |
+| Dev runner | `tsx` (`npm run dev`) |
+| Logging | `pino` |
+| Testing | `vitest` (unit, integration, e2e); `fast-check` (property/fuzz) |
+| Supply chain | `@cyclonedx/cyclonedx-npm` (`npm run sbom`) |
+| Lint / format | `eslint` + `prettier`; `husky` + `lint-staged` (pre-commit) |
+| Architecture enforcement | `dependency-cruiser` (`npm run arch:check`) |
