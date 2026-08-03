@@ -36,7 +36,7 @@
   "devDependencies": {
     "@cyclonedx/cyclonedx-npm": "^6.0.0",
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.1.2",
     "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
@@ -47,7 +47,7 @@
     "eslint-plugin-import-x": "^4.17.1",
     "fast-check": "^4.9.0",
     "husky": "^9.1.7",
-    "lint-staged": "^17.2.0",
+    "lint-staged": "^17.3.0",
     "prettier": "^3.9.6",
     "tsx": "^4.23.1",
     "typescript": "^6.0.3",
