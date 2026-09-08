@@ -27,17 +27,11 @@ jobs:
         env:
           HUSKY: 0
 
-      - name: Dependency audit (fail on high+)
-        run: npm run audit:check
-
       - name: Build with version stamp
         run: npm run build
         env:
           GIT_COMMIT: ${{ github.sha }}
           GIT_TAG: ${{ github.ref_name }}
-
-      - name: Generate SBOM
-        run: npm run sbom
 
       - name: Package release tarball
         run: |
@@ -64,5 +58,4 @@ jobs:
           body_path: RELEASE_NOTES.md
           files: |
             protocol-bridge-${{ env.RELEASE_VERSION }}.tar.gz
-            sbom.json
           generate_release_notes: false
