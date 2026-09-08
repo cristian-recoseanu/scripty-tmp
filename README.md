@@ -97,8 +97,6 @@ A single command mirrors the CI pipeline and is the recommended local check befo
 
 ```bash
 npm run validate     # typecheck → lint → arch:check → coverage
-npm run audit:check  # fail on high+ severity npm advisories
-npm run sbom         # CycloneDX SBOM → sbom.json
 ```
 
 Individual gates:
@@ -111,16 +109,13 @@ Individual gates:
 | `npm run format:check` | Prettier formatting check (`npm run format` to fix)              |
 | `npm run arch:check`   | Enforces the engine → adapter independence boundary              |
 | `npm run coverage`     | Tests + coverage thresholds                                      |
-| `npm run audit:check`  | Dependency audit — fails on high+ severity CVEs                  |
-| `npm run sbom`         | Generate CycloneDX SBOM for supply-chain visibility              |
 
 A **husky** pre-commit hook runs `lint-staged` to lint and format staged files automatically.
 
 ### Releases
 
-Push a semver tag (`v*`) to trigger the release workflow: it builds a stamped artifact, generates an SBOM,
-writes a changelog from commits since the previous tag, and publishes a GitHub Release with the tarball
-and `sbom.json` attached.
+Push a semver tag (`v*`) to trigger the release workflow: it builds a stamped artifact,
+writes a changelog from commits since the previous tag, and publishes a GitHub Release with the tarball.
 
 ---
 
@@ -159,6 +154,5 @@ test/                # Unit + integration tests (mirrors src/ layout)
 | Dev runner | `tsx` (`npm run dev`) |
 | Logging | `pino` |
 | Testing | `vitest` (unit, integration, e2e); `fast-check` (property/fuzz) |
-| Supply chain | `@cyclonedx/cyclonedx-npm` (`npm run sbom`) |
 | Lint / format | `eslint` + `prettier`; `husky` + `lint-staged` (pre-commit) |
 | Architecture enforcement | `dependency-cruiser` (`npm run arch:check`) |
