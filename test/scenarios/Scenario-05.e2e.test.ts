@@ -144,10 +144,10 @@ describe('E22.T6 — Scenario-05 e2e MQTT↔MQTT bidirectional relay', () => {
     expect(loadIngressMapping(resolve(SCENARIO_DIR, 'mapping/ingress.mqtt.yaml')).rules[0]?.reverse).toBeDefined();
   });
 
-  it('uses independent broker connections for ingress and egress', async () => {
-    const { connectAsync } = await import('mqtt');
-    expect(connectAsync).toHaveBeenCalledWith(SOURCE_BROKER, expect.any(Object));
-    expect(connectAsync).toHaveBeenCalledWith(DEST_BROKER, expect.any(Object));
+  it('uses independent broker connections for ingress and egress', () => {
+    expect(mqttClients.get(SOURCE_BROKER)).toBe(sourceClient);
+    expect(mqttClients.get(DEST_BROKER)).toBe(destClient);
+    expect(sourceClient).not.toBe(destClient);
   });
 
   it('relays source topic publish to destination topic via UCE', async () => {
