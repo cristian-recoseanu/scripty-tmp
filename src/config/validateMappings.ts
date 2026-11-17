@@ -12,10 +12,10 @@ import { ConfigError } from './loader.js';
 import { mappingValidationKind } from './mappingKind.js';
 import { crossValidateMappings } from './modelLoader.js';
 
-import type { MappingRef } from './modelLoader.js';
 import type { InstanceTree } from '../engine/model/ObjectTree.js';
 import type { EntityRegistry } from '../engine/types/EntityRegistry.js';
 import type { EgressMapping, IngressMapping } from '../mapping/types.js';
+import type { MappingRef } from './modelLoader.js';
 
 /** Extract static ingress target refs (skips locations with `{capture}` templates). */
 export function ingressMappingRefs(mapping: IngressMapping): MappingRef[] {

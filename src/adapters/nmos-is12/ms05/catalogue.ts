@@ -9,6 +9,10 @@
 import { FEATURE_SET_CLASS_DESCRIPTORS, FEATURE_SET_DATATYPE_DESCRIPTORS } from './featureSetCatalogue.js';
 import { STANDARD_CLASS_DESCRIPTORS, STANDARD_DATATYPE_DESCRIPTORS } from './standardCatalogue.js';
 
+import type { BaseType, DatatypeDefinition, FieldDef } from '../../../engine/types/Datatype.js';
+import type { DatatypeRegistry } from '../../../engine/types/DatatypeRegistry.js';
+import type { EntityDefinition, PropertyDef, MethodDef, ArgDef } from '../../../engine/types/EntityDefinition.js';
+import type { EntityRegistry } from '../../../engine/types/EntityRegistry.js';
 import type {
   NcDatatypeDescriptor,
   NcClassDescriptor,
@@ -17,10 +21,6 @@ import type {
   NcParameterDescriptor,
   NcFieldDescriptor,
 } from './types.js';
-import type { BaseType, DatatypeDefinition, FieldDef } from '../../../engine/types/Datatype.js';
-import type { DatatypeRegistry } from '../../../engine/types/DatatypeRegistry.js';
-import type { EntityDefinition, PropertyDef, MethodDef, ArgDef } from '../../../engine/types/EntityDefinition.js';
-import type { EntityRegistry } from '../../../engine/types/EntityRegistry.js';
 
 
 

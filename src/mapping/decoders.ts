@@ -5,9 +5,9 @@
  * or a typed DecodeError.
  */
 
-import type { DecodeDescriptor } from './types.js';
 import type { ModelValue } from '../engine/model/ObjectNode.js';
 import type { BaseType } from '../engine/types/Datatype.js';
+import type { DecodeDescriptor } from './types.js';
 
 
 // ---------------------------------------------------------------------------

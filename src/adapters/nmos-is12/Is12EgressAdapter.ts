@@ -56,11 +56,11 @@ import {
   type NcPropertyChangedEventData,
 } from './ms05/types.js';
 
-import type { Is12AdapterConfig, Is04Config } from './config.js';
+import type { PropertyChangedOp } from '../../engine/bus/operations.js';
 import type { Adapter, AdapterContext, AdapterFactory, HealthStatus, JSONSchema } from '../Adapter.js';
+import type { Is12AdapterConfig, Is04Config } from './config.js';
 import type { Is04Node, Is04Device, Is04Sender, Is04Receiver } from './is04/types.js';
 import type { Catalogue } from './ms05/catalogue.js';
-import type { PropertyChangedOp } from '../../engine/bus/operations.js';
 import type { WebSocket } from 'ws';
 
 // ---------------------------------------------------------------------------

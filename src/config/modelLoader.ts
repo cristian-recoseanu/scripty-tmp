@@ -23,15 +23,15 @@ import {
   TreeNodeSchema,
 } from './types.js';
 
+import type { MethodDescriptor, ModelValue, PropertyDescriptor } from '../engine/model/ObjectNode.js';
+import type { DatatypeDefinition, FieldDef, ValueConstraints } from '../engine/types/Datatype.js';
+import type { EntityDefinition } from '../engine/types/EntityDefinition.js';
 import type {
   ParsedDatatypesFile,
   ParsedEntitiesFile,
   ParsedEntityDef,
   ParsedTreeNode,
 } from './types.js';
-import type { MethodDescriptor, ModelValue, PropertyDescriptor } from '../engine/model/ObjectNode.js';
-import type { DatatypeDefinition, FieldDef, ValueConstraints } from '../engine/types/Datatype.js';
-import type { EntityDefinition } from '../engine/types/EntityDefinition.js';
 
 // ---------------------------------------------------------------------------
 // Internal helpers — YAML → zod parse
