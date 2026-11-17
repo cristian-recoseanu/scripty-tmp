@@ -16,9 +16,9 @@ import {
   parseTopicFilter,
 } from './types.js';
 
-import type { IngressMapping, IngressRule, ReverseDescriptor } from './types.js';
 import type { ModelValue } from '../engine/model/ObjectNode.js';
 import type { InstanceTree } from '../engine/model/ObjectTree.js';
+import type { IngressMapping, IngressRule, ReverseDescriptor } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Logger interface (injected; avoids no-console lint)

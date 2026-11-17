@@ -36,11 +36,11 @@ import {
   type NcBlockMemberDescriptor,
 } from './types.js';
 
-import type { Catalogue } from './catalogue.js';
-import type { IdentityRegistry } from './IdentityRegistry.js';
 import type { UceBus } from '../../../engine/bus/UceBus.js';
 import type { ModelValue } from '../../../engine/model/ObjectNode.js';
 import type { InstanceTree } from '../../../engine/model/ObjectTree.js';
+import type { Catalogue } from './catalogue.js';
+import type { IdentityRegistry } from './IdentityRegistry.js';
 
 
 
